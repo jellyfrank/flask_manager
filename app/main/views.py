@@ -16,8 +16,6 @@ import os
 from app.model.servers import Server
 
 # 通用列表查询
-
-
 def common_list(DynamicModel, view):
     # 接收参数
     action = request.args.get('action')
@@ -118,7 +116,6 @@ def index():
 
 
 # 自动路由
-
 model_class = {
     hasattr(v, "__routename__") and v.__routename__ or k: v for key, value in inspect.getmembers(model) if inspect.ismodule(
         value) for k, v in inspect.getmembers(value) if inspect.isclass(v)
