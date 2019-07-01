@@ -35,9 +35,8 @@ insert into "user" (username,password,fullname,email,phone,status) values ('admi
 # 自动生成表结构
 
 ```sh
-python3 manager shell
-
-db.create_all()
+python3 manage.py db upgrade
+python3 manage.py db mirgate
 ```
 
 # 启动
