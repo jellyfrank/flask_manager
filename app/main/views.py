@@ -2,7 +2,8 @@
 from app import model
 from app import logger, config
 import math
-from flask import render_template, redirect, url_for, flash, request
+from flask import redirect, url_for, flash, request
+from utils.view_util import render_template
 from flask_login import login_required, current_user
 # from app import utils
 from app.main import forms
@@ -15,8 +16,6 @@ import os
 from app.model.servers import Server
 
 # 通用列表查询
-
-
 def common_list(DynamicModel, view):
     # 接收参数
     action = request.args.get('action')
