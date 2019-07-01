@@ -16,13 +16,15 @@ import os
 from app.model.servers import Server
 
 # 通用列表查询
+
+
 def common_list(DynamicModel, view):
     # 接收参数
     action = request.args.get('action')
     id = request.args.get('id')
     page = int(request.args.get('page')) if request.args.get('page') else 1
     length = int(request.args.get('length') if request.args.get(
-        'length') else config.read("ITEMS_PER_PAGE"))
+        'length') else config.ITEMS_PER_PAGE)
 
     # 删除操作
     if action == 'del' and id:
@@ -31,12 +33,13 @@ def common_list(DynamicModel, view):
             db.session.delete(m)
             db.session.commit()
             flash('删除成功')
-        except Exception as ex :
+        except Exception as ex:
             logger.error("删除异常:{}".format(ex))
             flash('删除失败')
 
     # 查询列表
-    result = DynamicModel.query.order_by(DynamicModel.id).paginate(page, length, False)
+    result = DynamicModel.query.order_by(
+        DynamicModel.id).paginate(page, length, False)
     dict = {'content': [model_util.get_model_colums_dict(item) for item in result.items],
             'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
     return render_template(view, form=dict, current_user=current_user)
@@ -84,10 +87,12 @@ def common_edit(DynamicModel, form, view):
                         file = request.files[field.name]
                         if file.filename:
                             file.save(os.path.join(config.read(
-                                        "UPLOAD_PATH"), file.filename))
-                            conditions.append("{}='{}'".format(field.name,file.filename))
+                                "UPLOAD_PATH"), file.filename))
+                            conditions.append("{}='{}'".format(
+                                field.name, file.filename))
                     else:
-                        conditions.append("{}='{}'".format(field.name, field.data))
+                        conditions.append(
+                            "{}='{}'".format(field.name, field.data))
             fields = ",".join(conditions)
             m = eval("{}({})".format(DynamicModel.__name__, fields), None, None)
             db.session.add(m)
@@ -115,16 +120,17 @@ def index():
 # 自动路由
 
 model_class = {
-    hasattr(v,"__routename__") and v.__routename__ or k : v for key, value in inspect.getmembers(model) if inspect.ismodule(
+    hasattr(v, "__routename__") and v.__routename__ or k: v for key, value in inspect.getmembers(model) if inspect.ismodule(
         value) for k, v in inspect.getmembers(value) if inspect.isclass(v)
     and issubclass(v, db.Model) and getattr(v, "__routename__", False)
 }
 
 form_class = {
-    hasattr(value,"__routename__") and value.__routename__ or key : value
-    for key, value in inspect.getmembers(forms) if inspect.isclass(value) 
+    hasattr(value, "__routename__") and value.__routename__ or key: value
+    for key, value in inspect.getmembers(forms) if inspect.isclass(value)
     and issubclass(value, FlaskForm) and getattr(value, "__routename__", False)
 }
+
 
 def register_route(url, methods, func, login=True):
     '''注册路由'''
@@ -142,16 +148,19 @@ for name, cls in model_class.items():
 
     def func_list():
         ns, ep = request.url_rule.endpoint.split('.')
-        return common_list(model_class.get(ep.split('list')[0]), '{}.html'.format(ep))
+        pre = ep.split('list')[0]
+        return common_list(model_class.get(pre), f'{pre}/{ep}.html')
     func_list.__name__ = list_method
     register_route("/{}".format(list_method),
                    ["GET", "POST"], func_list)
 
     def func_eidt():
         ns, ep = request.url_rule.endpoint.split('.')
-        return common_edit(model_class.get(ep.split('edit')[0]), form_class.get(ep.split('edit')[0])(), '{}.html'.format(ep))
+        pre = ep.split('edit')[0]
+        return common_edit(model_class.get(pre), form_class.get(pre)(), f'{pre}/{ep}.html')
     func_eidt.__name__ = edit_method
     register_route("/{}".format(edit_method), ["GET", "POST"], func_eidt)
+
 
 @main.route('/term')
 @login_required
