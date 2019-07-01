@@ -1,0 +1,7 @@
+flask
+flask_sqlalchemy
+flask_login
+flask-script
+autils==0.1.0
+taobao-sdk
+suds-py3

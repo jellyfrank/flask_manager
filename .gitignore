@@ -1,0 +1,8 @@
+*.pyc
+.vscode
+__pycache__
+**/**.pyc
+app.log
+.fuse_hidden*
+*.log.*
+config.ini

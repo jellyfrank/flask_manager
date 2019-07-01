@@ -1,0 +1,59 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/xterm.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='dist/addons/fullscreen/fullscreen.css') }}" />
+  <!-- <link rel="stylesheet" href="/dist/style.css" /> -->
+  <script src="{{ url_for('static', filename='dist/xterm.js') }}"></script>
+  <script src="{{ url_for('static', filename='dist/addons/fullscreen/fullscreen.js') }}"></script>
+  <script src="{{ url_for('static', filename='dist/addons/fit/fit.js') }}"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div id="terminal-container"></div>
+  </div>
+  <script>
+    // terminado.apply(Terminal);
+
+    console.log("加载addons");
+    Terminal.applyAddon(fit);
+
+    // 获取网页高度和宽度
+    var cols = parseInt(document.documentElement.clientWidth/9.5,10)
+    var rows = parseInt(document.documentElement.clientHeight/18,10)
+
+
+    var term = new Terminal({
+      cols: cols,
+      rows: rows
+    }),
+      protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://',
+      socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + "/websocket/{{server_id}}";
+    sock = new WebSocket(socketURL);
+
+    sock.addEventListener('open', function () {
+      // term(sock);
+      //发送当前窗口大小
+      sock.send("size:" + cols + "," + rows)
+      term.on('data', function (data) {
+        sock.send(data);
+      });
+
+    });
+
+    sock.addEventListener("message", function (msg) {
+      console.log(msg);
+      term.write(msg.data)
+    });
+
+    console.log("打开");
+    term.open(document.getElementById('terminal-container'));
+    // term.write("Hello");
+    console.log("切换全屏");
+    term.fit();
+    // term.toggleFullScreen(true);
+  </script>
+</body>
+
+</html>
