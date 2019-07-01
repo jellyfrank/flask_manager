@@ -14,5 +14,5 @@ class Config(object):
         self.cf.read(path)
         self.env = env
 
-    def read(self, key):
+    def __getattr__(self, key):
         return self.cf.get(self.env, key)
