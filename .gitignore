@@ -6,3 +6,4 @@ app.log
 .fuse_hidden*
 *.log.*
 config.ini
+migrations

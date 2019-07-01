@@ -20,11 +20,19 @@ git clone https://github.com/block-cat/flask_manager.git
 pip install -r requirements.txt
 ```
 
-# 配置文件
+## 配置文件
 
 config.ini
 
-# 初始化用户
+## 初始化数据库
+
+```python
+python3 manage.py db init
+python3 manage.py db upgrade
+python3 manage.py db mirgate
+```
+
+## 初始化用户
 
 以pg为例
 
@@ -32,14 +40,7 @@ config.ini
 insert into "user" (username,password,fullname,email,phone,status) values ('admin','pbkdf2:sha256:50000$99JpNyzo$74d2e66765e6396d626822bc80100749afd4489cc0a4fe7e8e97394f1801e996','admin','admin@123.com','123','t');
 ```
 
-# 自动生成表结构
-
-```sh
-python3 manage.py db upgrade
-python3 manage.py db mirgate
-```
-
-# 启动
+## 启动
 
 ```python
 python __init__.py

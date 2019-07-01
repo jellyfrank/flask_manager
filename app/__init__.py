@@ -6,7 +6,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from autils import String
-from flask_apscheduler import APScheduler
+# from flask_apscheduler import APScheduler
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -35,6 +35,6 @@ from .main import main
 app.register_blueprint(auth)
 app.register_blueprint(main)
 
-scheduler = APScheduler()
-scheduler.init_app(app)
-scheduler.start()
+# scheduler = APScheduler()
+# scheduler.init_app(app)
+# scheduler.start()

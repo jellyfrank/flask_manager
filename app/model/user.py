@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String)  # 邮箱
     phone = db.Column(db.String)  # 电话
     status = db.Column(db.Boolean, default=True)  # 状态
+    otp_str = db.Column(db.String)  # 二次验证密钥
 
     def verify_password(self, raw_password):
         return check_password_hash(self.password, raw_password)

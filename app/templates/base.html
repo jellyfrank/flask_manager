@@ -54,7 +54,7 @@
                                     <img src="{{ url_for('static', filename='images/avatar.jpg') }}" class="img-circle"
                                         alt="User Image">
                                     <p>
-                                        <span>{{current_user.fullname}}</span>
+                                        <span><a href="{{url_for('main.my')}}">{{current_user.fullname}}</a></span>
                                         <small>{{current_user.email}}</small>
                                     </p>
                                 </li>

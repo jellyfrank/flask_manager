@@ -5,3 +5,4 @@ flask-script
 autils==0.1.0
 taobao-sdk
 suds-py3
+flask-migrate
