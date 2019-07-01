@@ -8,7 +8,6 @@ from app import config
 
 def render_template(template, **context):
     """添加常量"""
-    context["title"] = config.title
-    context["min_name"] = config.min_name
-    context["name"] = config.name
+    for key, value in config.comm.items():
+        context[key] = value
     return rt(template, **context)

@@ -1,5 +1,4 @@
 from app import app, config
-
 from tornado.web import FallbackHandler, Application, StaticFileHandler
 from tornado.wsgi import WSGIContainer
 from tornado.ioloop import IOLoop
