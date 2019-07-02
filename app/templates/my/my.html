@@ -30,6 +30,9 @@
                 <div class="form-group">
                     <label>{{form.otp_str.label}}</label>
                 </div>
+                {% if form.enable %}
+                <img class="qrcode" src="{{image_url}}" />
+                {% endif %}
                 <div id="qrimg" class="form-group"></div>
 
             </div>
@@ -63,14 +66,29 @@
 
         // 状态变更
         $("#enable").on("switchChange.bootstrapSwitch", function (event, state) {
-            $.post("/my", data = {
+            // $.post("/my", data = {
+            //     "id": $(this).attr("uid"),
+            //     "state": state,
+            // }, function (data) {
+            //     var res = JSON.parse(data);
+            //     if (res.result === 0) {
+            //         var img = "<img src='" + res.data + "'/>"
+            //         $("#qrimg").empty().append(img);
+            //     }
+            // })
+            restTemplate("POST", "my", {
                 "id": $(this).attr("uid"),
                 "state": state,
             }, function (data) {
                 var res = JSON.parse(data);
                 if (res.result === 0) {
-                    var img = "<img src='" + res.data + "'/>"
-                    $("#qrimg").empty().append(img);
+                    if (res.enable) {
+                        $(".qrcode").attr("src", res.data);
+                        $(".qrcode").show();
+                    }
+                    else {
+                        $(".qrcode").hide();
+                    }
                 }
             })
         });

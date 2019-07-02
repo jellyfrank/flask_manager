@@ -1,5 +1,5 @@
 //全局变量
-var apiBaseUrl = '/api';
+var apiBaseUrl = '/';
 
 $(function () {
     //初始化共公界面元素

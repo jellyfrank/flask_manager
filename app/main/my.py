@@ -2,7 +2,7 @@
 # @Time    : 2019-07-01
 # @Author  : Kevin Kong (kfx2007@163.com)
 
-from flask import request, flash, Response
+from flask import request, flash, Response, redirect
 from flask_login import login_required, current_user
 from . import main
 from utils.view_util import render_template
@@ -21,11 +21,27 @@ import json
 def my():
     """"个人中心"""
     if request.method == "GET":
-        return render_template("my/my.html", form=MyForm(), id=current_user.id)
+        # 是否启用了二次验证
+        context = {
+            "form": MyForm(),
+            "id": current_user.id,
+            "enable": False
+        }
+        if current_user.enable_otp:
+            img = qrcode.make(data=current_user.otp_str)
+            buffer = BytesIO()
+            img.save(buffer)
+            img_stream = buffer.getvalue()
+            # return Response(img_stream, content_type="image/png")
+            image = b64encode(img_stream).decode("utf-8")
+            image_url = f"data:image/png;base64,{image}"
+            context["form"].enable.data = True
+            context["image_url"] = image_url
+        return render_template("my/my.html", **context)
     if request.method == "POST":
-        fm = MyForm(request.form)
-        id = int(request.form.get("id", None))
-        state = bool(request.form.get("state", False))
+        fm = MyForm()
+        id = int(request.json.get("id", None))
+        state = bool(request.json.get("state", False))
         # 只允许修改自己的信息
         if id != current_user.id:
             flash("非法的操作")
@@ -35,8 +51,9 @@ def my():
             if not current_user.otp_str:
                 # 生成二维码
                 current_user.otp_str = String.generate()
-                db.session.add(current_user)
-                db.session.commit()
+            current_user.enable_otp = True
+            db.session.add(current_user)
+            db.session.commit()
             img = qrcode.make(data=current_user.otp_str)
             buffer = BytesIO()
             img.save(buffer)
@@ -44,10 +61,13 @@ def my():
             # return Response(img_stream, content_type="image/png")
             image = b64encode(img_stream).decode("utf-8")
             image_url = f"data:image/png;base64,{image}"
-            # image_url = "abcde"
-            # print('----------')
-            # print(image_url)
-            # return render_template("my/my.html", form=fm, image_url=image_url)
-            return json.dumps({"result": 0, "data": image_url})
-
-        return render_template("my/my.html", form=fm, id=current_user.id)
+            return json.dumps({"result": 0, "enable": True, "data": image_url})
+            # return redirect("/my")
+        else:
+            # 停用二次验证
+            fm.enable.data = False
+            current_user.enable_otp = False
+            db.session.add(current_user)
+            db.session.commit()
+        # return redirect("my/my.html", form=fm, id=current_user.id)
+            return json.dumps({"result": 0, "enable": False})

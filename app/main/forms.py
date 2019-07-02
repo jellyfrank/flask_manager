@@ -53,5 +53,5 @@ class UserPassword(FlaskForm):
 class MyForm(FlaskForm):
 
     otp_str = StringField("OTP 密钥")
-    enable = BooleanField("是否启用", default=True)
+    enable = BooleanField("是否启用", default=False)
     submit = SubmitField("生成")
