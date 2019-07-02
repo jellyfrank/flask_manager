@@ -85,8 +85,6 @@
             $.post('/pifrpc', {
                 'mac': $(this).data("mac")
             }, function (res) {
-                console.log(res)
-                console.log(res.result)
                 if (res["result"] == 0) {
                     alert("操作成功")
                 }

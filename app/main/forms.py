@@ -48,3 +48,10 @@ class UserPassword(FlaskForm):
         EqualTo('verify_password', message='两次密码不一致')])
     verify_password = PasswordField("再次输入新密码", [DataRequired(message="不能为空")])
     submit = SubmitField("修改密码")
+
+
+class MyForm(FlaskForm):
+
+    otp_str = StringField("OTP 密钥")
+    enable = BooleanField("是否启用", default=True)
+    submit = SubmitField("生成")
