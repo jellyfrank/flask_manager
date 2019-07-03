@@ -10,6 +10,7 @@ from .forms import UserPassword, MyForm
 from utils.model_util import flash_errors
 import qrcode
 from autils import String
+from autils.authentication import TwoStepVerification
 from app import db
 from io import BytesIO
 from base64 import b64encode
@@ -48,13 +49,14 @@ def my():
             return render_template("my/my.html", form=fm, id=current_user.id)
         # 是否启用二次验证
         if state:
+            tsv = TwoStepVerification(current_user.username)
             if not current_user.otp_str:
                 # 生成二维码
-                current_user.otp_str = String.generate()
+                current_user.otp_str = tsv.otp_str
             current_user.enable_otp = True
             db.session.add(current_user)
             db.session.commit()
-            img = qrcode.make(data=current_user.otp_str)
+            img = qrcode.make(data=tsv.get_qrcode_string())
             buffer = BytesIO()
             img.save(buffer)
             img_stream = buffer.getvalue()

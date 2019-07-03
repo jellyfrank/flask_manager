@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,61 +17,70 @@
     <script src="plugins/respond.min.js"></script>
     <![endif]-->
 </head>
+
 <body class="hold-transition login-page">
-<div class="login-box">
-    <div class="login-logo">
-        <b>系统登录</b>
-    </div>
-    <div class="login-box-body">
-        <p class="login-box-msg">请输入管理员帐户及密码</p>
-        <form method="post">
-            {{form.hidden_tag()}}
-            <div class="form-group has-feedback">
-                {{form.username(class_="form-control",placeholder="用户名")}}
-                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-            </div>
-            <div class="form-group has-feedback">
-                {{form.password(class_="form-control",placeholder="密码")}}
-                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-            </div>
+    <div class="login-box">
+        <div class="login-logo">
+            <b>系统登录</b>
+        </div>
+        <div class="login-box-body">
+            <p class="login-box-msg">请输入管理员帐户及密码</p>
+            <form method="post">
+                {{form.hidden_tag()}}
+                <div class="form-group has-feedback">
+                    {{form.username(class_="form-control",placeholder="用户名")}}
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    {{form.password(class_="form-control",placeholder="密码")}}
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                
+                {% if form.enable_otp.data %}
+                    <div class="form-group has-feedback">
+                        {{form.otp_code(class_="form-control",placeholder="二次验证数字")}}
+                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    </div>
+                {% endif %}
 
-            {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-            {% endfor %}
+                {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+                {% endfor %}
 
-            <div class="row">
-                <div class="col-xs-8">
-                    <div class="checkbox icheck">
-                        <label>
-                            {{form.rememberme()}}{{form.rememberme.label}}
-                        </label>
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="checkbox icheck">
+                            <label>
+                                {{form.rememberme()}}{{form.rememberme.label}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        {{form.submit(class_="btn btn-primary btn-block btn-flat")}}
                     </div>
                 </div>
-                <div class="col-xs-4">
-                    {{form.submit(class_="btn btn-primary btn-block btn-flat")}}
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
-<script src="{{ url_for('static', filename='plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
-<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='plugins/iCheck/icheck.min.js') }}"></script>
-<script src="{{ url_for('static', filename='plugins/pace/pace.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/global.js') }}"></script>
-<script>
-    function initPage() {
-        //初始化iCheck插件
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%' // optional
-        });
+    <script src="{{ url_for('static', filename='plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/iCheck/icheck.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/pace/pace.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+    <script>
+        function initPage() {
+            //初始化iCheck插件
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
 
-    }
-</script>
+        }
+    </script>
 </body>
+
 </html>
