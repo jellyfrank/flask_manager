@@ -25,15 +25,13 @@ def my():
         # 是否启用了二次验证
         context = {
             "form": MyForm(),
-            "id": current_user.id,
-            "enable": False
         }
+        context["form"].uid.data = current_user.id
         if current_user.enable_otp:
             img = qrcode.make(data=current_user.otp_str)
             buffer = BytesIO()
             img.save(buffer)
             img_stream = buffer.getvalue()
-            # return Response(img_stream, content_type="image/png")
             image = b64encode(img_stream).decode("utf-8")
             image_url = f"data:image/png;base64,{image}"
             context["form"].enable.data = True
@@ -41,8 +39,8 @@ def my():
         return render_template("my/my.html", **context)
     if request.method == "POST":
         fm = MyForm()
-        id = int(request.json.get("id", None))
-        state = bool(request.json.get("state", False))
+        id = int(request.form.get("uid", None))
+        state = bool(request.form.get("enable", None))
         # 只允许修改自己的信息
         if id != current_user.id:
             flash("非法的操作")
@@ -60,16 +58,14 @@ def my():
             buffer = BytesIO()
             img.save(buffer)
             img_stream = buffer.getvalue()
-            # return Response(img_stream, content_type="image/png")
             image = b64encode(img_stream).decode("utf-8")
             image_url = f"data:image/png;base64,{image}"
-            return json.dumps({"result": 0, "enable": True, "data": image_url})
-            # return redirect("/my")
+            return render_template("my/my.html", form=fm, image_url=image_url)
         else:
             # 停用二次验证
             fm.enable.data = False
             current_user.enable_otp = False
             db.session.add(current_user)
             db.session.commit()
-        # return redirect("my/my.html", form=fm, id=current_user.id)
-            return json.dumps({"result": 0, "enable": False})
+            return render_template("my/my.html", form=fm)
+

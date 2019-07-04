@@ -23,27 +23,35 @@
         <div class="box-body">
             <div class="col-md-12">
                 <div class="form-group">
-                    {{form.enable(uid=id)}}
+                    <label>{{form.enable.label}}</label>
                 </div>
-            </div>
-            <div class="col-md-12">
                 <div class="form-group">
-                    <label>{{form.otp_str.label}}</label>
+                    {{form.enable}}
                 </div>
-                {% if form.enable %}
-                <img class="qrcode" src="{{image_url}}" />
-                {% endif %}
-                <div id="qrimg" class="form-group"></div>
-
+                <di style="display: none">
+                    {{form.uid}}
+                </di>
             </div>
+            {% if form.enable.data %}
+            <div class=" col-md-12">
+                    <div class="form-group">
+                        <label>{{form.otp_str.label}}</label>
+                    </div>
+                    <div id="qrimg" class="form-group">
+                        <img class="qrcode" src="{{image_url}}" />
+                    </div>
+            </div>
+            {% endif %}
+
         </div>
+</div>
 
-        <!-- <div class="box-footer">
-            <div class="col-md-6">
-                {{form.submit(class_="btn btn-primary pull-left")}}
-            </div>
-        </div> -->
-    </form>
+<div class="box-footer" style="display: none">
+    <div class="col-md-6">
+        {{form.submit(class_="btn btn-primary pull-left")}}
+    </div>
+</div>
+</form>
 </div>
 {% endblock %}
 
@@ -76,21 +84,24 @@
             //         $("#qrimg").empty().append(img);
             //     }
             // })
-            restTemplate("POST", "my", {
-                "id": $(this).attr("uid"),
-                "state": state,
-            }, function (data) {
-                var res = JSON.parse(data);
-                if (res.result === 0) {
-                    if (res.enable) {
-                        $(".qrcode").attr("src", res.data);
-                        $(".qrcode").show();
-                    }
-                    else {
-                        $(".qrcode").hide();
-                    }
-                }
-            })
+            $(".btn-primary").click();
+            // restTemplate("POST", "my", {
+            //     "id": $(this).attr("uid"),
+            //     "state": state,
+            // }, function (data) {
+            //     var res = JSON.parse(data);
+            //     console.log(res);
+            //     if (res.result === 0) {
+            //         if (res.enable) {
+            //             window.location.reload();
+            //             $(".qrcode").attr("src", res.data);
+            //             $(".qrcode-div").show();
+            //         }
+            //         else {
+            //             $(".qrcode-div").hide();
+            //         }
+            //     }
+            // })
         });
 
     }

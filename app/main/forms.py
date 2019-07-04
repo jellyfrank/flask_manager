@@ -52,6 +52,7 @@ class UserPassword(FlaskForm):
 
 class MyForm(FlaskForm):
 
-    otp_str = StringField("OTP 密钥")
-    enable = BooleanField("是否启用", default=False)
+    uid = IntegerField("用户id")
+    otp_str = StringField("请使用二次验证APP(Google Authenticator)扫码，并妥善保管您的二维码。")
+    enable = BooleanField("是否启用二次验证登录", default=False)
     submit = SubmitField("生成")
