@@ -10,17 +10,19 @@ class MenuForm(FlaskForm):
 
     name = StringField("菜单名称", validators=[DataRequired(
         message='不能为空'), Length(0, 64, message='长度不正确')])
-    route = StringField("菜单路由", validators=[DataRequired(
-        message='不能为空'), Length(0, 15, message='长度不正确')])
-    parent = IntegerField("父级菜单")
-    model_name = StringField("模型名称", validators=[DataRequired(
-        message='不能为空'), Length(0, 64, message='长度不正确')])
+    route = StringField("菜单路由")
+    parent = IntegerField("父级菜单",default=0)
+    model_name = StringField("模型名称")
     fields = StringField("列表视图字段")
     active = BooleanField("是否启用", default=False)
     type = SelectField("类型", choices=[('1', "列表"),
                                       ('2', "编辑")
                                       ])
     submit = SubmitField('提交')
+
+class TestForm(FlaskForm):
+
+    __routename__ = "testmodel"
 
 
 class CfgNotifyForm(FlaskForm):

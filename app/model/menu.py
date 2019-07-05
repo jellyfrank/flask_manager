@@ -17,3 +17,11 @@ class Menu(db.Model):
     active = db.Column(db.Boolean)  # 是否启用
     fields = db.Column(db.String)  # 列表字段
     type = db.Column(db.Integer) #菜单类型 1 列表， 2 编辑
+
+
+class TestModel(db.Model):
+
+    __routename__ = "testmodel"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)  # 菜单名称

@@ -85,6 +85,31 @@
                         </a>
                     </li>
                     <!--可配置菜单-->
+                    {% for menu in menus %}
+                        {% if not menu.childs %}
+                        <!--顶级菜单-->
+                        <li>
+                            <a href="{{ url_for(menu.route) if menu.route else '#' }}">
+                                <i class="fa fa-home"></i>
+                                <span>{{menu.name}}</span>
+                            </a>
+                        </li>
+                        {% endif%}
+                        {% if menu.childs %}
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span>{{menu.name}}</span>
+                                <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                            </a>
+                            <ul class="treeview-menu">
+                                {% for child in menu.childs %}
+                                <li><a href="{{url_for(child.route) if child.route else '#'}}"><i class="fa fa-bars"></i> {{child.name}}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
                     <!--系统设置-->
                     <li class="treeview">
                         <a href="#">

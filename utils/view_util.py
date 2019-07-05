@@ -4,10 +4,31 @@
 
 from flask import render_template as rt
 from app import config
+from app.model.menu import Menu
+
+
+def get_menus():
+    # 获取通用菜单
+    # 获取顶级菜单
+    data = []
+    menus = Menu.query.filter(Menu.active == True, Menu.parent == 0).all()
+    for menu in menus:
+        childs = Menu.query.filter(
+            Menu.active == True, Menu.parent == menu.id).all()
+        data.append({
+            "name": menu.name,
+            "route": f"main.{menu.route}" if menu.route else None,
+            "childs": [{
+                "name": child.name,
+                "route": f"main.{child.model_name}{'list' if child.type==1 else 'edit'}",
+            } for child in childs]
+        })
+    return data
 
 
 def render_template(template, **context):
     """添加常量"""
     for key, value in config.comm.items():
         context[key] = value
+        context["menus"] = get_menus()
     return rt(template, **context)

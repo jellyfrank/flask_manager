@@ -125,45 +125,46 @@ form_class = {
 
 def register_route(url, methods, func, login=True):
     '''注册路由'''
-    logger.info("注册路由:{}".format(url))
+    logger.info(f"注册路由:{url},endpoint:{methods},func:{func.__name__}")
     if login:
         main.route(url, methods=methods)(login_required(func))
     else:
-        main.route(url, methods=methods)
+        main.route(url, methods=methods)(func)
 
 
-for name, cls in model_class.items():
+# for name, cls in model_class.items():
 
-    list_method, edit_method = "{}list".format(
-        cls.__routename__), "{}edit".format(cls.__routename__)
+#     list_method, edit_method = "{}list".format(
+#         cls.__routename__), "{}edit".format(cls.__routename__)
 
-    def func_list():
-        ns, ep = request.url_rule.endpoint.split('.')
-        pre = ep.split('list')[0]
-        return common_list(model_class.get(pre), f'{pre}/{ep}.html')
-    func_list.__name__ = list_method
-    register_route("/{}".format(list_method),
-                   ["GET", "POST"], func_list)
+#     def func_list():
+#         ns, ep = request.url_rule.endpoint.split('.')
+#         pre = ep.split('list')[0]
+#         return common_list(model_class.get(pre), f'{pre}/{ep}.html')
+#     func_list.__name__ = list_method
+#     register_route("/{}".format(list_method),
+#                    ["GET", "POST"], func_list)
 
-    def func_eidt():
-        ns, ep = request.url_rule.endpoint.split('.')
-        pre = ep.split('edit')[0]
-        return common_edit(model_class.get(pre), form_class.get(pre)(), f'{pre}/{ep}.html')
-    func_eidt.__name__ = edit_method
-    register_route("/{}".format(edit_method), ["GET", "POST"], func_eidt)
+#     def func_eidt():
+#         ns, ep = request.url_rule.endpoint.split('.')
+#         pre = ep.split('edit')[0]
+#         return common_edit(model_class.get(pre), form_class.get(pre)(), f'{pre}/{ep}.html')
+#     func_eidt.__name__ = edit_method
+#     register_route("/{}".format(edit_method), ["GET", "POST"], func_eidt)
 
 # 通用菜单注册
 menus = Menu.query.filter(Menu.active == True).all()
 for menu in menus:
-    # 注册列表路由
-    if menu.type == 1:
-        # 查找是否存在对应的编辑路由
-        me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
-        comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.route}" if me else None, fm=form_class.get(m.model_name)())
-        comm_menu_list.__name__ = f"{menu.route}"
-        register_route(comm_menu_list.__name__, ["GET"], comm_menu_list)
-    # 注册编辑路由
-    if menu.type == 2:
-        comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
-        comm_menu_edit.__name__ = f"{menu.route}"
-        register_route(comm_menu_edit.__name__,["GET","POST"],comm_menu_edit)
+    if menu.route:
+        # 注册列表路由
+        if menu.type == 1:
+            # 查找是否存在对应的编辑路由
+            me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
+            comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.route}" if me else None, fm=form_class.get(m.model_name)())
+            comm_menu_list.__name__ = f"{menu.model_name}list"
+            register_route(f"{menu.route}", ["GET"], comm_menu_list)
+        # 注册编辑路由
+        if menu.type == 2:
+            comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
+            comm_menu_edit.__name__ = f"{menu.model_name}edit"
+            register_route(f"{menu.route}",["GET","POST"],comm_menu_edit)

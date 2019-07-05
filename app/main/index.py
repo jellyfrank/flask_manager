@@ -6,7 +6,9 @@ from . import main
 from flask_login import login_required, current_user
 from utils.view_util import render_template
 from flask import redirect, url_for, request
+from .views import common_list, common_edit
 from app.model.menu import Menu
+from .forms import MenuForm
 
 # 根目录跳转
 @main.route('/', methods=['GET'])
@@ -15,21 +17,22 @@ def root():
     return redirect(url_for('main.index'))
 
 
+@main.route('/menulist', methods=["GET"])
+@login_required
+def menulist():
+    return common_list(Menu, "menu/menulist.html")
+
+
+@main.route('/menuedit', methods=["GET","POST"])
+@login_required
+def menuedit():
+    return common_edit(Menu, MenuForm(), "menu/menulist.html")
+
 # 首页
 @main.route('/index', methods=['GET'])
 @login_required
 def index():
-    # 获取通用菜单
-    # 获取顶级菜单
-    # data = {}
-    # menus = Menu.query.filter(Menu.active == True, Menu.parent == 0).all()
-    # for menu in menus:
-    #     data["name"] = menu.name
-    #     childs = Menu.query.filter(
-    #         Menu.active == True, Menu.parent == menu.id).all()
-    #     data["childs"] = [{"name"}]
-
-    return render_template('index.html', current_user=current_user, menus=menus)
+    return render_template('index.html', current_user=current_user)
 
 
 @main.route('/term')
