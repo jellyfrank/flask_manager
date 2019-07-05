@@ -53,8 +53,6 @@ def common_edit(DynamicModel, form, view,**context):
         if model:
             if request.method == 'GET':
                 dict = model_util.get_model_colums_dict(model)
-                print('****')
-                print(dict)
                 for key, value in dict.items():
                     if key in form.__dict__ and value:
                         field = getattr(form, key)

@@ -26,7 +26,7 @@ def menulist():
 @main.route('/menuedit', methods=["GET","POST"])
 @login_required
 def menuedit():
-    return common_edit(Menu, MenuForm(), "menu/menulist.html")
+    return common_edit(Menu, MenuForm(), "menu/menuedit.html")
 
 # 首页
 @main.route('/index', methods=['GET'])
