@@ -14,9 +14,12 @@ import inspect
 from flask_wtf import FlaskForm
 import os
 from app.model.servers import Server
+from app.model.menu import Menu
 
 # 通用列表查询
-def common_list(DynamicModel, view):
+
+
+def common_list(DynamicModel, view, **context):
     # 接收参数
     action = request.args.get('action')
     id = request.args.get('id')
@@ -40,11 +43,13 @@ def common_list(DynamicModel, view):
         DynamicModel.id).paginate(page, length, False)
     dict = {'content': [model_util.get_model_colums_dict(item) for item in result.items],
             'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
-    return render_template(view, form=dict, current_user=current_user)
+    print('-------')
+    print(dict)
+    return render_template(view, form=dict, current_user=current_user, **context)
 
 
 # 通用单模型查询&新增&修改
-def common_edit(DynamicModel, form, view):
+def common_edit(DynamicModel, form, view,**context):
     id = request.args.get('id', '')
     if id:
         # 查询
@@ -52,6 +57,8 @@ def common_edit(DynamicModel, form, view):
         if model:
             if request.method == 'GET':
                 dict = model_util.get_model_colums_dict(model)
+                print('****')
+                print(dict)
                 for key, value in dict.items():
                     if key in form.__dict__ and value:
                         field = getattr(form, key)
@@ -67,6 +74,8 @@ def common_edit(DynamicModel, form, view):
                                 file.save(os.path.join(config.read(
                                     "UPLOAD_PATH"), file.filename))
                                 setattr(model, field.name, file.filename)
+                        elif field.type == 'BooleanField':
+                            setattr(model, field.name, bool(field.data))
                         else:
                             setattr(model, field.name, field.data)
                     db.session.add(model)
@@ -88,6 +97,10 @@ def common_edit(DynamicModel, form, view):
                                 "UPLOAD_PATH"), file.filename))
                             conditions.append("{}='{}'".format(
                                 field.name, file.filename))
+                    elif field.type == 'BooleanField':
+                        conditions.append(
+                            f"{field.name}={field.data}"
+                        )
                     else:
                         conditions.append(
                             "{}='{}'".format(field.name, field.data))
@@ -98,7 +111,7 @@ def common_edit(DynamicModel, form, view):
             flash('保存成功')
         else:
             model_util.flash_errors(form)
-    return render_template(view, form=form, current_user=current_user)
+    return render_template(view, form=form, current_user=current_user,**context)
 
 
 # 根目录跳转
@@ -164,3 +177,16 @@ for name, cls in model_class.items():
 def get_term():
     id = request.args.get("id")
     return render_template("term.html", server_id=id)
+
+from copy import deepcopy
+# 通用菜单注册
+menus = Menu.query.filter(Menu.active == True).all()
+for menu in menus:
+    # 注册列表路由
+    comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{m.route}edit", fm=form_class.get(m.model_name)())
+    comm_menu_list.__name__ = f"{menu.route}list"
+    register_route(comm_menu_list.__name__, ["GET"], comm_menu_list)
+    # 注册编辑路由
+    comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
+    comm_menu_edit.__name__ = f"{menu.route}edit"
+    register_route(comm_menu_edit.__name__,["GET","POST"],comm_menu_edit)

@@ -4,6 +4,22 @@ from wtforms import IntegerField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
 
 
+class MenuForm(FlaskForm):
+
+    __routename__ = "menu"
+
+    name = StringField("菜单名称", validators=[DataRequired(
+        message='不能为空'), Length(0, 64, message='长度不正确')])
+    route = StringField("菜单路由", validators=[DataRequired(
+        message='不能为空'), Length(0, 15, message='长度不正确')])
+    parent = IntegerField("父级菜单")
+    model_name = StringField("模型名称", validators=[DataRequired(
+        message='不能为空'), Length(0, 64, message='长度不正确')])
+    fields = StringField("列表视图字段")
+    active = BooleanField("是否启用", default=False)
+    submit = SubmitField('提交')
+
+
 class CfgNotifyForm(FlaskForm):
 
     __routename__ = "notify"

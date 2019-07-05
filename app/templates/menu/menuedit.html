@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}编辑菜单{% endblock %}
+
+
+{% block navbar %}
+<section class="content-header">
+    <h1>编辑菜单</h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 当前位置</li>
+        <li class="active">菜单管理</li>
+        <li class="active">编辑菜单</li>
+    </ol>
+</section>
+{% endblock %}
+
+
+{% block content %}
+<div class="box box-primary">
+    <form method="post" enctype="multipart/form-data">
+        {{form.hidden_tag()}}
+        <div class="box-header with-border">
+            {% include 'message.html' %}
+        </div>
+
+        <div class="box-body">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.name.label}}</label>
+                    {{form.name(class_="form-control",placeholder="请输入菜单名称")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.route.label}}</label>
+                    {{form.route(class_="form-control",placeholder="请输入菜单路由")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.parent.label}}</label>
+                    {{form.parent(class_="form-control",placeholder="请输入父级菜单ID")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.model_name.label}}</label>
+                    {{form.model_name(class_="form-control",placeholder="请输入模型名称")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.fields.label}}</label>
+                    {{form.fields(class_="form-control",placeholder="请输入列表视图要显示的字段，逗号分隔")}}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>{{form.active.label}}</label>
+                    <div>{{form.active(class_="form-control")}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box-footer">
+            <div class="col-md-12">
+                {{form.submit(class_="btn btn-primary pull-right")}}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function initPage() {
+
+        switch_value = $('#active')[0].checked
+        $('#active').bootstrapSwitch({
+            state: switch_value,
+            onText: '启用',
+            offText: '停用'
+
+        });
+    }
+</script>
+{% endblock %}

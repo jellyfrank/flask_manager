@@ -84,6 +84,19 @@
                             <span>首页</span>
                         </a>
                     </li>
+                    <!--可配置菜单-->
+                    <!--系统设置-->
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-cog"></i>
+                            <span>系统设置</span>
+                            <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{{url_for('main.menulist')}}"><i class="fa fa-bars"></i> 菜单管理</a></li>
+                            <li><a href="#"><i class="fa fa-user"></i> 用户管理</a></li>
+                        </ul>
+                    </li>
 
                 </ul>
             </section>
