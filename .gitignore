@@ -7,3 +7,4 @@ app.log
 *.log.*
 config.ini
 migrations
+*.log

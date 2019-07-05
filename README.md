@@ -8,6 +8,11 @@ flask_manager是一个基于[flask-adminlte-scaffold](https://github.com/xiiiblu
 
 主要将flask-adminlte-scaffold中的orm由peewe替换为sqlalchemy并精简了一些代码。
 
+![](demo.png)
+
+* 菜单管理功能，通过后台就可以自己添加菜单
+* 个人中心，增加二次验证功能
+
 ## 安装方式
 
 ```sh
@@ -45,3 +50,5 @@ insert into "user" (username,password,fullname,email,phone,status) values ('admi
 ```python
 python __init__.py
 ```
+
+
