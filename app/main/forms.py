@@ -17,6 +17,9 @@ class MenuForm(FlaskForm):
         message='不能为空'), Length(0, 64, message='长度不正确')])
     fields = StringField("列表视图字段")
     active = BooleanField("是否启用", default=False)
+    type = SelectField("类型", choices=[('1', "列表"),
+                                      ('2', "编辑")
+                                      ])
     submit = SubmitField('提交')
 
 

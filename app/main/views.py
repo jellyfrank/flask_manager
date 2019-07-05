@@ -17,8 +17,6 @@ from app.model.servers import Server
 from app.model.menu import Menu
 
 # 通用列表查询
-
-
 def common_list(DynamicModel, view, **context):
     # 接收参数
     action = request.args.get('action')
@@ -43,8 +41,6 @@ def common_list(DynamicModel, view, **context):
         DynamicModel.id).paginate(page, length, False)
     dict = {'content': [model_util.get_model_colums_dict(item) for item in result.items],
             'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
-    print('-------')
-    print(dict)
     return render_template(view, form=dict, current_user=current_user, **context)
 
 
@@ -113,21 +109,6 @@ def common_edit(DynamicModel, form, view,**context):
             model_util.flash_errors(form)
     return render_template(view, form=form, current_user=current_user,**context)
 
-
-# 根目录跳转
-@main.route('/', methods=['GET'])
-@login_required
-def root():
-    return redirect(url_for('main.index'))
-
-
-# 首页
-@main.route('/index', methods=['GET'])
-@login_required
-def index():
-    return render_template('index.html', current_user=current_user)
-
-
 # 自动路由
 model_class = {
     hasattr(v, "__routename__") and v.__routename__ or k: v for key, value in inspect.getmembers(model) if inspect.ismodule(
@@ -171,22 +152,18 @@ for name, cls in model_class.items():
     func_eidt.__name__ = edit_method
     register_route("/{}".format(edit_method), ["GET", "POST"], func_eidt)
 
-
-@main.route('/term')
-@login_required
-def get_term():
-    id = request.args.get("id")
-    return render_template("term.html", server_id=id)
-
-from copy import deepcopy
 # 通用菜单注册
 menus = Menu.query.filter(Menu.active == True).all()
 for menu in menus:
     # 注册列表路由
-    comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{m.route}edit", fm=form_class.get(m.model_name)())
-    comm_menu_list.__name__ = f"{menu.route}list"
-    register_route(comm_menu_list.__name__, ["GET"], comm_menu_list)
+    if menu.type == 1:
+        # 查找是否存在对应的编辑路由
+        me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
+        comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.route}" if me else None, fm=form_class.get(m.model_name)())
+        comm_menu_list.__name__ = f"{menu.route}"
+        register_route(comm_menu_list.__name__, ["GET"], comm_menu_list)
     # 注册编辑路由
-    comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
-    comm_menu_edit.__name__ = f"{menu.route}edit"
-    register_route(comm_menu_edit.__name__,["GET","POST"],comm_menu_edit)
+    if menu.type == 2:
+        comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
+        comm_menu_edit.__name__ = f"{menu.route}"
+        register_route(comm_menu_edit.__name__,["GET","POST"],comm_menu_edit)

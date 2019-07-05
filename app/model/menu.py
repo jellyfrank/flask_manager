@@ -16,3 +16,4 @@ class Menu(db.Model):
     model_name = db.Column(db.String)  # 模型名称
     active = db.Column(db.Boolean)  # 是否启用
     fields = db.Column(db.String)  # 列表字段
+    type = db.Column(db.Integer) #菜单类型 1 列表， 2 编辑
