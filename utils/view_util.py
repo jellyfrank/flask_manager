@@ -18,9 +18,11 @@ def get_menus():
         data.append({
             "name": menu.name,
             "route": f"main.{menu.route}" if menu.route else None,
+            "icon": menu.icon,
             "childs": [{
                 "name": child.name,
                 "route": f"main.{child.model_name}{'list' if child.type==1 else 'edit'}",
+                "icon": child.icon
             } for child in childs]
         })
     return data

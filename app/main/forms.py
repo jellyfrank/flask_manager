@@ -18,11 +18,8 @@ class MenuForm(FlaskForm):
     type = SelectField("类型", choices=[('1', "列表"),
                                       ('2', "编辑")
                                       ])
+    icon = StringField("菜单图标")
     submit = SubmitField('提交')
-
-class TestForm(FlaskForm):
-
-    __routename__ = "testmodel"
 
 
 class CfgNotifyForm(FlaskForm):
