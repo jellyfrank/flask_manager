@@ -11,7 +11,7 @@ class MenuForm(FlaskForm):
     name = StringField("菜单名称", validators=[DataRequired(
         message='不能为空'), Length(0, 64, message='长度不正确')])
     route = StringField("菜单路由")
-    parent = IntegerField("父级菜单",default=0)
+    parent = IntegerField("父级菜单", default=0)
     model_name = StringField("模型名称")
     fields = StringField("列表视图字段")
     active = BooleanField("是否启用", default=False)
@@ -66,6 +66,18 @@ class UserPassword(FlaskForm):
         EqualTo('verify_password', message='两次密码不一致')])
     verify_password = PasswordField("再次输入新密码", [DataRequired(message="不能为空")])
     submit = SubmitField("修改密码")
+
+
+class Users(FlaskForm):
+
+    username = StringField("用户名", validators=[DataRequired("用户名不能为空")])
+    password = PasswordField("密码", validators=[DataRequired("密码不能为空")])
+    fullname = StringField("姓名")
+    email = StringField("邮箱", validators=[DataRequired("邮箱必填")])
+    phone = StringField("电话")
+    status = BooleanField("启用")
+    enable_otp = BooleanField("是否启用两步验证")
+    submit = SubmitField("提交")
 
 
 class MyForm(FlaskForm):

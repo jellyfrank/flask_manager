@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}编辑用户{% endblock %}
+
+
+{% block navbar %}
+<section class="content-header">
+    <h1>编辑用户</h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 当前位置</li>
+        <li class="active">系统设置</li>
+        <li class="active">编辑用户</li>
+    </ol>
+</section>
+{% endblock %}
+
+
+{% block content %}
+<div class="box box-primary">
+    <form method="post" enctype="multipart/form-data">
+        {{form.hidden_tag()}}
+        <div class="box-header with-border">
+            {% include 'message.html' %}
+        </div>
+
+        <div class="box-body">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.username.label}}</label>
+                    {{form.username(class_="form-control",placeholder="请输入用户名称")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.password.label}}</label>
+                    {{form.password(class_="form-control",placeholder="请输入用户密码")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.fullname.label}}</label>
+                    {{form.fullname(class_="form-control",placeholder="请输入姓名")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.phone.label}}</label>
+                    {{form.phone(class_="form-control",placeholder="请输入联系电话")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.email.label}}</label>
+                    {{form.email(class_="form-control",placeholder="请输入邮箱")}}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>{{form.status.label}}</label>
+                    <div>{{form.status(class_="form-control",placeholder="状态")}}</div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>{{form.enable_otp.label}}</label>
+                    <div>{{form.enable_otp(class_="form-control",placeholder="两步验证")}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box-footer">
+            <div class="col-md-12">
+                {{form.submit(class_="btn btn-primary pull-right")}}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function initPage() {
+
+        $('#status').bootstrapSwitch();
+        $("#status").on("switchChange.bootstrapSwitch", function (event, state) {
+            switchStatus($(this).data("id"), state, this);
+        });
+
+        $('#enable_otp').bootstrapSwitch();
+        $("#enable_otp").on("switchChange.bootstrapSwitch", function (event, state) {
+            switchStatus($(this).data("id"), state, this);
+        });
+
+    }
+</script>
+{% endblock %}

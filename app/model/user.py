@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String)  # 用户名
     password = db.Column(db.String)  # 密码
-    fullname = db.Column(db.String)  # 真实性名
+    fullname = db.Column(db.String)  # 真实姓名
     email = db.Column(db.String)  # 邮箱
     phone = db.Column(db.String)  # 电话
     status = db.Column(db.Boolean, default=True)  # 状态

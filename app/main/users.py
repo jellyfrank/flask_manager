@@ -9,6 +9,10 @@ from . import main
 from utils.view_util import render_template
 from .forms import UserPassword
 from utils.model_util import flash_errors
+from app.model.user import User
+from app.main.forms import Users
+from app.main.views import common_list, common_edit
+from werkzeug.security import generate_password_hash
 
 
 @main.route("/changepasswd", methods=["GET", "POST"])
@@ -33,3 +37,23 @@ def changepasswd():
         current_user.update_password(new_password)
         flash("密码修改成功")
         return render_template("user/changepasswd.html", form=form)
+
+
+@main.route("/userlist", methods=["GET"])
+@login_required
+def userlist():
+    """用户管理"""
+    users = User.query.all()
+    form = Users()
+    return common_list(User, "user/userlist.html")
+
+
+@main.route("/useredit", methods=["GET", "POST"])
+@login_required
+def useredit():
+    """用户编辑"""
+    form = Users()
+    if request.method == "POST":
+        if "password" in request.form:
+            form.password.data  = generate_password_hash(request.form["password"])
+    return common_edit(User,form,"user/useredit.html")

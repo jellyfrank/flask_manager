@@ -15,6 +15,7 @@ from flask_wtf import FlaskForm
 import os
 from app.model.servers import Server
 from app.model.menu import Menu
+from app.model.user import User
 
 # 通用列表查询
 def common_list(DynamicModel, view, **context):
