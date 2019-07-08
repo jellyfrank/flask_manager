@@ -6,7 +6,7 @@ from . import main
 from flask_login import login_required, current_user
 from utils.view_util import render_template
 from flask import redirect, url_for, request
-from .views import common_list, common_edit
+from .views import common_list, common_edit, register_comm_menus
 from app.model.menu import Menu
 from .forms import MenuForm
 
@@ -26,7 +26,9 @@ def menulist():
 @main.route('/menuedit', methods=["GET","POST"])
 @login_required
 def menuedit():
-    return common_edit(Menu, MenuForm(), "menu/menuedit.html")
+    res = common_edit(Menu, MenuForm(), "menu/menuedit.html")
+    register_comm_menus()
+    return res
 
 # 首页
 @main.route('/index', methods=['GET'])

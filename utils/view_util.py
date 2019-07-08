@@ -17,11 +17,11 @@ def get_menus():
             Menu.active == True, Menu.parent == menu.id).all()
         data.append({
             "name": menu.name,
-            "route": f"main.{menu.route}" if menu.route else None,
+            "route": menu.route or None,
             "icon": menu.icon,
             "childs": [{
                 "name": child.name,
-                "route": f"main.{child.model_name}{'list' if child.type==1 else 'edit'}",
+                "route": child.route or None,
                 "icon": child.icon
             } for child in childs]
         })

@@ -16,6 +16,7 @@ import os
 from app.model.servers import Server
 from app.model.menu import Menu
 from app.model.user import User
+import traceback
 
 # 通用列表查询
 def common_list(DynamicModel, view, **context):
@@ -153,14 +154,19 @@ def register_route(url, methods, func, login=True):
 
 # 通用菜单注册
 def register_comm_menus():
-    menus = Menu.query.filter(Menu.active == True).all()
+    # 菜单数据异常则跳过不加载
+    try:
+        menus = Menu.query.filter(Menu.active == True).all()
+    except Exception as err:
+        logger.error(f"通用菜单加载异常:{traceback.format_exc()}")
+        return
     for menu in menus:
         if menu.route:
             # 注册列表路由
             if menu.type == 1:
                 # 查找是否存在对应的编辑路由
                 me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
-                comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.route}" if me else None, fm=form_class.get(m.model_name)())
+                comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.model_name}edit" if me else None, fm=form_class.get(m.model_name)())
                 comm_menu_list.__name__ = f"{menu.model_name}list"
                 register_route(f"{menu.route}", ["GET"], comm_menu_list)
             # 注册编辑路由

@@ -10,3 +10,4 @@ from . import users
 from . import my
 from . import settings
 
+views.register_comm_menus()
