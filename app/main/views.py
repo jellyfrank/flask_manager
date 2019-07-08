@@ -152,18 +152,19 @@ def register_route(url, methods, func, login=True):
 #     register_route("/{}".format(edit_method), ["GET", "POST"], func_eidt)
 
 # 通用菜单注册
-menus = Menu.query.filter(Menu.active == True).all()
-for menu in menus:
-    if menu.route:
-        # 注册列表路由
-        if menu.type == 1:
-            # 查找是否存在对应的编辑路由
-            me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
-            comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.route}" if me else None, fm=form_class.get(m.model_name)())
-            comm_menu_list.__name__ = f"{menu.model_name}list"
-            register_route(f"{menu.route}", ["GET"], comm_menu_list)
-        # 注册编辑路由
-        if menu.type == 2:
-            comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
-            comm_menu_edit.__name__ = f"{menu.model_name}edit"
-            register_route(f"{menu.route}",["GET","POST"],comm_menu_edit)
+def register_comm_menus():
+    menus = Menu.query.filter(Menu.active == True).all()
+    for menu in menus:
+        if menu.route:
+            # 注册列表路由
+            if menu.type == 1:
+                # 查找是否存在对应的编辑路由
+                me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
+                comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.route}" if me else None, fm=form_class.get(m.model_name)())
+                comm_menu_list.__name__ = f"{menu.model_name}list"
+                register_route(f"{menu.route}", ["GET"], comm_menu_list)
+            # 注册编辑路由
+            if menu.type == 2:
+                comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
+                comm_menu_edit.__name__ = f"{menu.model_name}edit"
+                register_route(f"{menu.route}",["GET","POST"],comm_menu_edit)

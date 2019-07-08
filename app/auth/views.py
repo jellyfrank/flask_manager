@@ -6,6 +6,7 @@ from flask_login import login_user, logout_user, login_required
 from app import logger
 import traceback
 from autils.authentication import TwoStepVerification
+from app.main.views import register_comm_menus
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -30,6 +31,8 @@ def login():
 
             if user:
                 if user.verify_password(form.password.data):
+                    # 获取菜单
+                    register_comm_menus()
                     login_user(user, form.rememberme.data)
                     return redirect(request.args.get('next') or url_for('main.index'))
                 else:
