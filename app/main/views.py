@@ -23,9 +23,6 @@ import traceback
 
 def common_list(DynamicModel, view, **context):
     # 接收参数
-    # logger.debug("---------")
-    # for rule in app.url_map.iter_rules():
-    #     logger.debug(f"当前路由表：{rule}")
     action = request.args.get('action')
     id = request.args.get('id')
     page = int(request.args.get('page')) if request.args.get('page') else 1
@@ -106,6 +103,7 @@ def common_edit(DynamicModel, form, view, **context):
                         conditions.append(
                             "{}='{}'".format(field.name, field.data))
             fields = ",".join(conditions)
+            #[FIXME] eval should not use
             m = eval("{}({})".format(DynamicModel.__name__, fields), None, None)
             db.session.add(m)
             db.session.commit()
@@ -137,58 +135,13 @@ def register_route(url, methods, func, login=True):
     else:
         main.route(url, methods=methods)(func)
 
-
-# for name, cls in model_class.items():
-
-#     list_method, edit_method = "{}list".format(
-#         cls.__routename__), "{}edit".format(cls.__routename__)
-
-#     def func_list():
-#         ns, ep = request.url_rule.endpoint.split('.')
-#         pre = ep.split('list')[0]
-#         return common_list(model_class.get(pre), f'{pre}/{ep}.html')
-#     func_list.__name__ = list_method
-#     register_route("/{}".format(list_method),
-#                    ["GET", "POST"], func_list)
-
-#     def func_eidt():
-#         ns, ep = request.url_rule.endpoint.split('.')
-#         pre = ep.split('edit')[0]
-#         return common_edit(model_class.get(pre), form_class.get(pre)(), f'{pre}/{ep}.html')
-#     func_eidt.__name__ = edit_method
-#     register_route("/{}".format(edit_method), ["GET", "POST"], func_eidt)
-
-# 通用菜单注册
-# def register_comm_menus():
-#     # 菜单数据异常则跳过不加载
-#     try:
-#         menus = Menu.query.filter(Menu.active == True).all()
-#     except Exception as err:
-#         logger.error(f"通用菜单加载异常:{traceback.format_exc()}")
-#         return
-#     for menu in menus:
-#         if menu.route:
-#             # 注册列表路由
-#             if menu.type == 1:
-#                 # 查找是否存在对应的编辑路由
-#                 me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
-#                 comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.model_name}edit" if me else None, fm=form_class.get(m.model_name)())
-#                 comm_menu_list.__name__ = f"{menu.model_name}list"
-#                 register_route(f"{menu.route}", ["GET"], comm_menu_list)
-#             # 注册编辑路由
-#             if menu.type == 2:
-#                 comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
-#                 comm_menu_edit.__name__ = f"{menu.model_name}edit"
-#                 register_route(f"{menu.route}",["GET","POST"],comm_menu_edit)
-
-
 @main.route("/comm/<route>", methods=["GET", "POST"])
 @login_required
 def comm_action(route):
     try:
         menu = Menu.query.filter(Menu.active == True, Menu.route == route).first()
         if not menu:
-            abort(404)
+            abort(500)
         if request.method == "GET":
             if menu.type == 1:
                 me = Menu.query.filter(
