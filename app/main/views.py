@@ -141,7 +141,7 @@ def comm_action(route):
     try:
         menu = Menu.query.filter(Menu.active == True, Menu.route == route).first()
         if not menu:
-            abort(500)
+            abort(404)
         if request.method == "GET":
             if menu.type == 1:
                 me = Menu.query.filter(
