@@ -41,10 +41,26 @@
                 </div>
             </div>
             {% endif %}
+            {% if field.type == "PasswordField" %}
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{field.label}}</label>
+                    <div>{{field(class_="form-control")}}</div>
+                </div>
+            </div>
+            {% endif %}
             {% if field.type=="SubmitField"%}
             <div class="box-footer">
                 <div class="col-md-12">
                     {{field(class_="btn btn-primary pull-right")}}
+                </div>
+            </div>
+            {% endif %}
+            {% if field.type=="FileField"%}
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{field.label}}</label>
+                    {{field(class_="form-control")}}
                 </div>
             </div>
             {% endif %}
