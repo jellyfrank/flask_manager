@@ -48,11 +48,14 @@
         {% endif %}
     </div>
 
+    {% if editroute %}
     <div class="box-footer">
         <div class="col-md-12">
-            <a class='btn btn-primary pull-right' href='{{ url_for("main.menuedit") }}'>新建菜单</a>
+            <a class='btn btn-primary pull-right' href='/comm/{{editroute}}'>新建{{nav}}</a>
         </div>
     </div>
+    {% endif %}
+
 
     <div class="box-footer clearfix">
         {% if form%}

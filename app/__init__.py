@@ -6,6 +6,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from autils import String
+import logging
 # from flask_apscheduler import APScheduler
 
 login_manager = LoginManager()
@@ -13,7 +14,7 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
 config = Config("config.ini", "DEV")
-logger = Logger(config.log).logger
+logger = Logger(config.log,level=logging.DEBUG if config.DEBUG else logging.INFO).logger
 
 app = Flask(__name__)
 login_manager.init_app(app)

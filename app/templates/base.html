@@ -89,7 +89,7 @@
                         {% if not menu.childs %}
                         <!--顶级菜单-->
                         <li>
-                            <a href="{{menu.route}}">
+                            <a href="/comm/{{menu.route}}">
                                 <i class="{{menu.icon}}"></i>
                                 <span>{{menu.name}}</span>
                             </a>
@@ -104,7 +104,7 @@
                             </a>
                             <ul class="treeview-menu">
                                 {% for child in menu.childs %}
-                                <li><a href="{{url_for(child.route) if child.route else '#'}}"><i class="{{child.icon}}"></i> {{child.name}}</a></li>
+                                <li><a href="/comm/{{child.route if child.route else '#'}}"><i class="{{child.icon}}"></i> {{child.name}}</a></li>
                                 {% endfor %}
                             </ul>
                         </li>

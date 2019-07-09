@@ -1,4 +1,4 @@
-from app import app, config
+from app import app, config, logger
 from tornado.web import FallbackHandler, Application, StaticFileHandler
 from tornado.wsgi import WSGIContainer
 from tornado.ioloop import IOLoop
@@ -25,4 +25,5 @@ if __name__ == "__main__":
     else:
         httpserver = HTTPServer(application)
     httpserver.listen(int(config.PORT))
+    logger.info(f"服务已启动，端口：{config.PORT}")
     IOLoop.current().start()

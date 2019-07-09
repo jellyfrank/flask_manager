@@ -1,8 +1,8 @@
 # from app import get_logger, get_config
-from app import model
+from app import model, app
 from app import logger, config
 import math
-from flask import redirect, url_for, flash, request
+from flask import redirect, url_for, flash, request, abort
 from utils.view_util import render_template
 from flask_login import login_required, current_user
 # from app import utils
@@ -19,8 +19,13 @@ from app.model.user import User
 import traceback
 
 # 通用列表查询
+
+
 def common_list(DynamicModel, view, **context):
     # 接收参数
+    # logger.debug("---------")
+    # for rule in app.url_map.iter_rules():
+    #     logger.debug(f"当前路由表：{rule}")
     action = request.args.get('action')
     id = request.args.get('id')
     page = int(request.args.get('page')) if request.args.get('page') else 1
@@ -47,7 +52,7 @@ def common_list(DynamicModel, view, **context):
 
 
 # 通用单模型查询&新增&修改
-def common_edit(DynamicModel, form, view,**context):
+def common_edit(DynamicModel, form, view, **context):
     id = request.args.get('id', '')
     if id:
         # 查询
@@ -87,8 +92,8 @@ def common_edit(DynamicModel, form, view,**context):
             for field in form:
                 if field.name in dict.keys():
                     if field.type == "FileField":
-                        file = request.files[field.name]
-                        if file.filename:
+                        file = request.files.get(field.name,None)
+                        if file and file.filename:
                             file.save(os.path.join(config.read(
                                 "UPLOAD_PATH"), file.filename))
                             conditions.append("{}='{}'".format(
@@ -107,7 +112,8 @@ def common_edit(DynamicModel, form, view,**context):
             flash('保存成功')
         else:
             model_util.flash_errors(form)
-    return render_template(view, form=form, current_user=current_user,**context)
+    return render_template(view, form=form, current_user=current_user, **context)
+
 
 # 自动路由
 model_class = {
@@ -153,24 +159,44 @@ def register_route(url, methods, func, login=True):
 #     register_route("/{}".format(edit_method), ["GET", "POST"], func_eidt)
 
 # 通用菜单注册
-def register_comm_menus():
-    # 菜单数据异常则跳过不加载
+# def register_comm_menus():
+#     # 菜单数据异常则跳过不加载
+#     try:
+#         menus = Menu.query.filter(Menu.active == True).all()
+#     except Exception as err:
+#         logger.error(f"通用菜单加载异常:{traceback.format_exc()}")
+#         return
+#     for menu in menus:
+#         if menu.route:
+#             # 注册列表路由
+#             if menu.type == 1:
+#                 # 查找是否存在对应的编辑路由
+#                 me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
+#                 comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.model_name}edit" if me else None, fm=form_class.get(m.model_name)())
+#                 comm_menu_list.__name__ = f"{menu.model_name}list"
+#                 register_route(f"{menu.route}", ["GET"], comm_menu_list)
+#             # 注册编辑路由
+#             if menu.type == 2:
+#                 comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
+#                 comm_menu_edit.__name__ = f"{menu.model_name}edit"
+#                 register_route(f"{menu.route}",["GET","POST"],comm_menu_edit)
+
+
+@main.route("/comm/<route>", methods=["GET", "POST"])
+@login_required
+def comm_action(route):
     try:
-        menus = Menu.query.filter(Menu.active == True).all()
-    except Exception as err:
-        logger.error(f"通用菜单加载异常:{traceback.format_exc()}")
-        return
-    for menu in menus:
-        if menu.route:
-            # 注册列表路由
+        menu = Menu.query.filter(Menu.active == True, Menu.route == route).first()
+        if not menu:
+            abort(404)
+        if request.method == "GET":
             if menu.type == 1:
-                # 查找是否存在对应的编辑路由
-                me = Menu.query.filter(Menu.active == True, Menu.model_name==menu.model_name,Menu.type=="2").first()
-                comm_menu_list = lambda m=menu: common_list(model_class.get(m.model_name), "menu/commlist.html", nav=m.name, editroute=f"main.{me.model_name}edit" if me else None, fm=form_class.get(m.model_name)())
-                comm_menu_list.__name__ = f"{menu.model_name}list"
-                register_route(f"{menu.route}", ["GET"], comm_menu_list)
-            # 注册编辑路由
+                me = Menu.query.filter(
+                    Menu.active == True, Menu.model_name == menu.model_name, Menu.type == "2").first()
+                return common_list(model_class.get(menu.model_name), "menu/commlist.html", nav=menu.name, editroute=f"{me.route}" if me else None, fm=form_class.get(menu.model_name)())
             if menu.type == 2:
-                comm_menu_edit = lambda m=menu: common_edit(model_class.get(m.model_name), form_class.get(m.model_name)(),"menu/commedit.html", nav=m.name)
-                comm_menu_edit.__name__ = f"{menu.model_name}edit"
-                register_route(f"{menu.route}",["GET","POST"],comm_menu_edit)
+                return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
+        if request.method == "POST":
+            return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
+    except Exception as err:
+        logger.error(f"通用路由响应异常:{traceback.format_exc()}")
