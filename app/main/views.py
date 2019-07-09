@@ -50,66 +50,69 @@ def common_list(DynamicModel, view, **context):
 
 # 通用单模型查询&新增&修改
 def common_edit(DynamicModel, form, view, **context):
-    id = request.args.get('id', '')
-    if id:
-        # 查询
-        model = DynamicModel.query.get(id)
-        if model:
-            if request.method == 'GET':
-                dict = model_util.get_model_colums_dict(model)
-                for key, value in dict.items():
-                    if key in form.__dict__ and value:
-                        field = getattr(form, key)
-                        field.data = dict.get(key)
-                        setattr(form, key, field)
-            # 修改
-            if request.method == 'POST':
-                if form.validate_on_submit():
-                    for field in form:
-                        if field.type == 'FileField':
-                            file = request.files[field.name]
-                            if file.filename:
+    try:
+        id = request.args.get('id', '')
+        if id:
+            # 查询
+            model = DynamicModel.query.get(id)
+            if model:
+                if request.method == 'GET':
+                    dict = model_util.get_model_colums_dict(model)
+                    for key, value in dict.items():
+                        if key in form.__dict__ and value:
+                            field = getattr(form, key)
+                            field.data = dict.get(key)
+                            setattr(form, key, field)
+                # 修改
+                if request.method == 'POST':
+                    if form.validate_on_submit():
+                        for field in form:
+                            if field.type == 'FileField':
+                                file = request.files[field.name]
+                                if file.filename:
+                                    file.save(os.path.join(config.read(
+                                        "UPLOAD_PATH"), file.filename))
+                                    setattr(model, field.name, file.filename)
+                            elif field.type == 'BooleanField':
+                                setattr(model, field.name, bool(field.data))
+                            else:
+                                setattr(model, field.name, field.data)
+                        db.session.add(model)
+                        db.session.commit()
+                        flash('修改成功')
+                    else:
+                        model_util.flash_errors(form)
+        else:
+            # 新增
+            if form.validate_on_submit():
+                dict = model_util.get_model_colums_dict(DynamicModel)
+                conditions = []
+                for field in form:
+                    if field.name in dict.keys():
+                        if field.type == "FileField":
+                            file = request.files.get(field.name, None)
+                            if file and file.filename:
                                 file.save(os.path.join(config.read(
                                     "UPLOAD_PATH"), file.filename))
-                                setattr(model, field.name, file.filename)
+                                conditions.append("{}='{}'".format(
+                                    field.name, file.filename))
                         elif field.type == 'BooleanField':
-                            setattr(model, field.name, bool(field.data))
+                            conditions.append(
+                                f"{field.name}={field.data}"
+                            )
                         else:
-                            setattr(model, field.name, field.data)
-                    db.session.add(model)
-                    db.session.commit()
-                    flash('修改成功')
-                else:
-                    model_util.flash_errors(form)
-    else:
-        # 新增
-        if form.validate_on_submit():
-            dict = model_util.get_model_colums_dict(DynamicModel)
-            conditions = []
-            for field in form:
-                if field.name in dict.keys():
-                    if field.type == "FileField":
-                        file = request.files.get(field.name,None)
-                        if file and file.filename:
-                            file.save(os.path.join(config.read(
-                                "UPLOAD_PATH"), file.filename))
-                            conditions.append("{}='{}'".format(
-                                field.name, file.filename))
-                    elif field.type == 'BooleanField':
-                        conditions.append(
-                            f"{field.name}={field.data}"
-                        )
-                    else:
-                        conditions.append(
-                            "{}='{}'".format(field.name, field.data))
-            fields = ",".join(conditions)
-            #[FIXME] eval should not use
-            m = eval("{}({})".format(DynamicModel.__name__, fields), None, None)
-            db.session.add(m)
-            db.session.commit()
-            flash('保存成功')
-        else:
-            model_util.flash_errors(form)
+                            conditions.append(
+                                "{}='{}'".format(field.name, field.data))
+                fields = ",".join(conditions)
+                # [FIXME] eval should not use
+                m = eval("{}({})".format(DynamicModel.__name__, fields), None, None)
+                db.session.add(m)
+                db.session.commit()
+                flash('保存成功')
+            else:
+                model_util.flash_errors(form)
+    except Exception as err:
+        logger.error(f"通用模型添加或修改异常:{traceback.format_exc()}")
     return render_template(view, form=form, current_user=current_user, **context)
 
 
@@ -135,11 +138,12 @@ def register_route(url, methods, func, login=True):
     else:
         main.route(url, methods=methods)(func)
 
+
 @main.route("/comm/<route>", methods=["GET", "POST"])
 @login_required
 def comm_action(route):
-    try:
-        menu = Menu.query.filter(Menu.active == True, Menu.route == route).first()
+        menu = Menu.query.filter(
+            Menu.active == True, Menu.route == route).first()
         if not menu:
             abort(404)
         if request.method == "GET":
@@ -151,5 +155,3 @@ def comm_action(route):
                 return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
         if request.method == "POST":
             return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
-    except Exception as err:
-        logger.error(f"通用路由响应异常:{traceback.format_exc()}")
