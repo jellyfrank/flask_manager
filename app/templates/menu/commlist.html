@@ -38,7 +38,7 @@
                 <td>{{row.get(field.name)}}</td>
                 {% endfor %}
                 {% if editroute %}
-                <td><a class='fa fa-lg fa-edit text-light-blue' href='{{url_for(editroute,id=row.id)}} '></a>
+                <td><a class='fa fa-lg fa-edit text-light-blue' href='/comm/{{editroute}}?id={{row.id}}'></a>
                 </td>
                 {% endif %}
                 <td><a class='fa fa-lg fa-warning text-red' href='?action=del&id={{row.id}}'></a></td>
