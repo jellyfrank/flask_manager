@@ -17,11 +17,13 @@ from app.model.servers import Server
 from app.model.menu import Menu
 from app.model.user import User
 import traceback
+from sqlalchemy.inspection import inspect as isp
+
 
 # 通用列表查询
 
 
-def common_list(DynamicModel, view, **context):
+def common_list(DynamicModel, view,pk="id", **context):
     # 接收参数
     action = request.args.get('action')
     id = request.args.get('id')
@@ -124,9 +126,9 @@ model_class = {
 }
 
 form_class = {
-    hasattr(value, "__routename__") and value.__routename__ or key: value
-    for key, value in inspect.getmembers(forms) if inspect.isclass(value)
-    and issubclass(value, FlaskForm) and getattr(value, "__routename__", False)
+    hasattr(v, "__routename__") and v.__routename__ or k: v for key, value in inspect.getmembers(main) if inspect.ismodule(
+        value) for k, v in inspect.getmembers(value) if inspect.isclass(v)
+    and issubclass(v, FlaskForm) and getattr(v, "__routename__", False)
 }
 
 
@@ -150,7 +152,8 @@ def comm_action(route):
             if menu.type == 1:
                 me = Menu.query.filter(
                     Menu.active == True, Menu.model_name == menu.model_name, Menu.type == "2").first()
-                return common_list(model_class.get(menu.model_name), "menu/commlist.html", nav=menu.name, editroute=f"{me.route}" if me else None, fm=form_class.get(menu.model_name)())
+                pk = isp(model_class.get(menu.model_name)).primary_key[0].name
+                return common_list(model_class.get(menu.model_name), "menu/commlist.html", nav=menu.name, pk=pk, editroute=f"{me.route}" if me else None, fm=form_class.get(menu.model_name)())
             if menu.type == 2:
                 return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
         if request.method == "POST":

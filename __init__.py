@@ -25,5 +25,5 @@ if __name__ == "__main__":
     else:
         httpserver = HTTPServer(application)
     httpserver.listen(int(config.PORT))
-    logger.info(f"服务已启动，端口：{config.PORT}")
+    logger.info(f"服务器[{config.HOST}]在端口[{config.PORT}]已启动监听, 数据库服务器地址:[{config.DB_HOST}]")
     IOLoop.current().start()
