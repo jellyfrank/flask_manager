@@ -21,9 +21,9 @@ from sqlalchemy.inspection import inspect as isp
 
 
 # 通用列表查询
-    
 
-def common_list(DynamicModel, view,pk="id", **context):
+
+def common_list(DynamicModel, view, pk="id", **context):
     # 接收参数
     action = request.args.get('action')
     id = request.args.get('id')
@@ -44,16 +44,16 @@ def common_list(DynamicModel, view,pk="id", **context):
 
     # 查询列表
     result = DynamicModel.query.order_by(
-        DynamicModel.id).paginate(page, length, False)
+        getattr(DynamicModel, pk)).paginate(page, length, False)
     dict = {'content': [model_util.get_model_colums_dict(item) for item in result.items],
             'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
     return render_template(view, form=dict, current_user=current_user, **context)
 
 
 # 通用单模型查询&新增&修改
-def common_edit(DynamicModel, form, view, **context):
+def common_edit(DynamicModel, form, view, pk="id", ** context):
     try:
-        id = request.args.get('id', '')
+        id = request.args.get(pk, '')
         if id:
             # 查询
             model = DynamicModel.query.get(id)
@@ -107,7 +107,8 @@ def common_edit(DynamicModel, form, view, **context):
                                 "{}='{}'".format(field.name, field.data))
                 fields = ",".join(conditions)
                 # [FIXME] eval should not use
-                m = eval("{}({})".format(DynamicModel.__name__, fields), None, None)
+                m = eval("{}({})".format(
+                    DynamicModel.__name__, fields), None, None)
                 db.session.add(m)
                 db.session.commit()
                 flash('保存成功')
@@ -120,16 +121,23 @@ def common_edit(DynamicModel, form, view, **context):
 
 # 自动路由
 model_class = {
-    hasattr(v, "__routename__") and v.__routename__ or k: v for key, value in inspect.getmembers(model) if inspect.ismodule(
+    hasattr(v, "__routename__") and v.__routename__ or k: v 
+    for key, value in inspect.getmembers(model) 
+    if inspect.ismodule(
         value) for k, v in inspect.getmembers(value) if inspect.isclass(v)
     and issubclass(v, db.Model) and getattr(v, "__routename__", False)
 }
 
 form_class = {
-    hasattr(v, "__routename__") and v.__routename__ or k: v for key, value in inspect.getmembers(main) if inspect.ismodule(
+    hasattr(v, "__routename__") and v.__routename__ or k: v 
+    for key, value in inspect.getmembers(main) if inspect.ismodule(
         value) for k, v in inspect.getmembers(value) if inspect.isclass(v)
     and issubclass(v, FlaskForm) and getattr(v, "__routename__", False)
 }
+
+logger.debug(f"已注册的模型:{model_class}")
+#[FIXME] form_class结果为空
+logger.debug(f"已注册的表单:{form_class}")
 
 
 def register_route(url, methods, func, login=True):
@@ -144,17 +152,21 @@ def register_route(url, methods, func, login=True):
 @main.route("/comm/<route>", methods=["GET", "POST"])
 @login_required
 def comm_action(route):
-        menu = Menu.query.filter(
-            Menu.active == True, Menu.route == route).first()
-        if not menu:
-            abort(404)
-        if request.method == "GET":
-            if menu.type == 1:
-                me = Menu.query.filter(
-                    Menu.active == True, Menu.model_name == menu.model_name, Menu.type == "2").first()
-                pk = isp(model_class.get(menu.model_name)).primary_key[0].name
-                return common_list(model_class.get(menu.model_name), "menu/commlist.html", nav=menu.name, pk=pk, editroute=f"{me.route}" if me else None, fm=form_class.get(menu.model_name)())
-            if menu.type == 2:
-                return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
-        if request.method == "POST":
+    menu = Menu.query.filter(
+        Menu.active == True, Menu.route == route).first()
+    if not menu:
+        abort(404)
+    if request.method == "GET":
+        if menu.type == 1:
+            me = Menu.query.filter(
+                Menu.active == True, Menu.model_name == menu.model_name, Menu.type == "2").first()
+            pk = isp(model_class.get(menu.model_name)).primary_key[0].name
+            fm = form_class.get(menu.model_name,None)
+            if not fm:
+                raise Exception(f"不存在与{menu.model_name}对应的表单，是否定义了？")
+            
+            return common_list(model_class.get(menu.model_name), "menu/commlist.html", nav=menu.name, pk=pk, editroute=f"{me.route}" if me else None, fm=fm())
+        if menu.type == 2:
             return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
+    if request.method == "POST":
+        return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)
