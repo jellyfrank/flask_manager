@@ -14,7 +14,7 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
 config = Config("config.ini", "DEV")
-logger = Logger(config.log,level=logging.DEBUG if config.DEBUG else logging.INFO).logger
+logger = Logger(config.log,level=logging.DEBUG if config.DEBUG else logging.INFO,when='d').logger
 
 app = Flask(__name__)
 login_manager.init_app(app)
