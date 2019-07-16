@@ -51,4 +51,20 @@ insert into "user" (username,password,fullname,email,phone,status) values ('admi
 python __init__.py
 ```
 
+## 通用管理后台
 
+快速创建可以编辑查询的数据模型
+
+### 创建模型
+
+1. 首先在model文件夹下创建model文件，在__init__.py文件中引入。
+2. models的定义中添加__routename__用于指定路由前缀（需要使用通用管理模型的类使用，不适用通用管理模型的类可以不添加）
+
+### 创建表单
+
+1. 在main文件夹下创建与前面创建模型对应的表单，并使用同样的__routename__指定路由
+2. 在views文件中，引入数据模型
+
+### 手动创建菜单
+
+启动系统后，在菜单管理中，手动创建菜单

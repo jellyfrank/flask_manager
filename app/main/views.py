@@ -21,7 +21,7 @@ from sqlalchemy.inspection import inspect as isp
 
 
 # 通用列表查询
-
+    
 
 def common_list(DynamicModel, view,pk="id", **context):
     # 接收参数

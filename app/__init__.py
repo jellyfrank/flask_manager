@@ -1,4 +1,6 @@
-
+#!/usr/bin/python3
+# @Time    : 2019-07-16
+# @Author  : Kevin Kong (kfx2007@163.com)
 
 from utils.config import Config
 from autils import Logger
@@ -7,7 +9,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from autils import String
 import logging
-# from flask_apscheduler import APScheduler
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -35,7 +36,3 @@ from .main import main
 
 app.register_blueprint(auth)
 app.register_blueprint(main)
-
-# scheduler = APScheduler()
-# scheduler.init_app(app)
-# scheduler.start()
