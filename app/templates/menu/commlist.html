@@ -22,7 +22,7 @@
         {% if fm%}
         <table class="table table-bordered">
             <tr>
-                <th>ID</th>
+                <th hidden="1">{{pk}}</th>
                 {% for field in fm if field.name !='csrf_token' and field.type !='SubmitField' %}
                 <th>{{field.label}}</th>
                 {% endfor %}
@@ -33,15 +33,15 @@
             </tr>
             {% for row in form.content%}
             <tr>
-                <td>{{row.id}}</td>
+                <td hidden="1">{{row[pk]}}</td>
                 {% for field in fm if field.name !='csrf_token'and field.type !='SubmitField' %}
                 <td>{{row.get(field.name)}}</td>
                 {% endfor %}
                 {% if editroute %}
-                <td><a class='fa fa-lg fa-edit text-light-blue' href='/comm/{{editroute}}?id={{row.id}}'></a>
+                <td><a class='fa fa-lg fa-edit text-light-blue' href='/comm/{{editroute}}?id={{row[pk]}}'></a>
                 </td>
                 {% endif %}
-                <td><a class='fa fa-lg fa-warning text-red' href='?action=del&id={{row.id}}'></a></td>
+                <td><a class='fa fa-lg fa-warning text-red' href='?action=del&id={{row[pk]}}'></a></td>
             </tr>
             {% endfor %}
         </table>
