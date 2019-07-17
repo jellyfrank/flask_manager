@@ -23,10 +23,10 @@ from sqlalchemy.inspection import inspect as isp
 # 通用列表查询
 
 
-def common_list(DynamicModel, view, pk="id", **context):
+def common_list(DynamicModel, view, primary_key="id", **context):
     # 接收参数
     action = request.args.get('action')
-    id = request.args.get('id')
+    id = request.args.get(primary_key)
     page = int(request.args.get('page')) if request.args.get('page') else 1
     length = int(request.args.get('length') if request.args.get(
         'length') else config.ITEMS_PER_PAGE)
@@ -42,9 +42,10 @@ def common_list(DynamicModel, view, pk="id", **context):
             logger.error("删除异常:{}".format(ex))
             flash('删除失败')
 
+    context["pk"] = primary_key
     # 查询列表
     result = DynamicModel.query.order_by(
-        getattr(DynamicModel, pk)).paginate(page, length, False)
+        getattr(DynamicModel, primary_key)).paginate(page, length, False)
     dict = {'content': [model_util.get_model_colums_dict(item) for item in result.items],
             'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
     return render_template(view, form=dict, current_user=current_user, **context)
