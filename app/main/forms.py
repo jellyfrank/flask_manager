@@ -3,7 +3,6 @@ from wtforms import StringField, SubmitField, BooleanField, PasswordField, Selec
 from wtforms import IntegerField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
 
-
 class MenuForm(FlaskForm):
 
     __routename__ = "menu"

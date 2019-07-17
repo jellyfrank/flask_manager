@@ -4,7 +4,7 @@
 
 from flask import request, flash, Response, redirect
 from flask_login import login_required, current_user
-from . import main
+from . import bp_main
 from utils.view_util import render_template
 from .forms import UserPassword, MyForm
 from utils.model_util import flash_errors
@@ -17,7 +17,7 @@ from base64 import b64encode
 import json
 
 
-@main.route("/my", methods=["GET", "POST"])
+@bp_main.route("/my", methods=["GET", "POST"])
 @login_required
 def my():
     """"个人中心"""

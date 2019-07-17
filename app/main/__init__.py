@@ -2,7 +2,7 @@
 
 from flask import Blueprint
 
-main = Blueprint('main', __name__)
+bp_main = Blueprint('main', __name__)
 
 from . import index
 from . import views, forms, errors

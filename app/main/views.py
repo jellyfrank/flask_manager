@@ -1,13 +1,13 @@
 # from app import get_logger, get_config
-from app import model, app
+from app import model, app, main
 from app import logger, config
+from app.main.forms import *
 import math
 from flask import redirect, url_for, flash, request, abort
 from utils.view_util import render_template
 from flask_login import login_required, current_user
 # from app import utils
-from app.main import forms
-from . import main
+from . import bp_main
 from utils import model_util
 from app import db
 import inspect
@@ -144,12 +144,12 @@ def register_route(url, methods, func, login=True):
     '''注册路由'''
     logger.info(f"注册路由:{url},endpoint:{methods},func:{func.__name__}")
     if login:
-        main.route(url, methods=methods)(login_required(func))
+        bp_main.route(url, methods=methods)(login_required(func))
     else:
-        main.route(url, methods=methods)(func)
+        bp_main.route(url, methods=methods)(func)
 
 
-@main.route("/comm/<route>", methods=["GET", "POST"])
+@bp_main.route("/comm/<route>", methods=["GET", "POST"])
 @login_required
 def comm_action(route):
     menu = Menu.query.filter(

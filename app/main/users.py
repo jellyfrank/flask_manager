@@ -5,7 +5,7 @@
 # 用户安全相关
 from flask import request, flash
 from flask_login import login_required, current_user
-from . import main
+from . import bp_main
 from utils.view_util import render_template
 from .forms import UserPassword
 from utils.model_util import flash_errors
@@ -15,7 +15,7 @@ from app.main.views import common_list, common_edit
 from werkzeug.security import generate_password_hash
 
 
-@main.route("/changepasswd", methods=["GET", "POST"])
+@bp_main.route("/changepasswd", methods=["GET", "POST"])
 @login_required
 def changepasswd():
     """修改密码"""
@@ -39,7 +39,7 @@ def changepasswd():
         return render_template("user/changepasswd.html", form=form)
 
 
-@main.route("/userlist", methods=["GET"])
+@bp_main.route("/userlist", methods=["GET"])
 @login_required
 def userlist():
     """用户管理"""
@@ -48,7 +48,7 @@ def userlist():
     return common_list(User, "user/userlist.html")
 
 
-@main.route("/useredit", methods=["GET", "POST"])
+@bp_main.route("/useredit", methods=["GET", "POST"])
 @login_required
 def useredit():
     """用户编辑"""
