@@ -160,6 +160,8 @@ def comm_action(route):
         if menu.type == 1:
             me = Menu.query.filter(
                 Menu.active == True, Menu.model_name == menu.model_name, Menu.type == "2").first()
+            if not model_class.get(menu.model_name):
+                raise Exception(f"模型{menu.model_name}不存在")
             pk = isp(model_class.get(menu.model_name)).primary_key[0].name
             fm = form_class.get(menu.model_name,None)
             if not fm:
