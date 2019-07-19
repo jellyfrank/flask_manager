@@ -3,7 +3,6 @@ from app import db
 
 class Group(db.Model):
 
-    __routename__ = "group"
     __tablename__ = "group"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,7 +14,6 @@ class Group(db.Model):
 
 class Permission(db.Model):
 
-    __routename__ = "permission"
     __tablename__ = "permission"
 
     id = db.Column(db.Integer,primary_key=True)
@@ -25,7 +23,6 @@ class Permission(db.Model):
 
 class Group_Permission_Relation(db.Model):
 
-    __routename__ = "group_permission_relation"
     __tablename__ = "group_permission_relation"
 
     id = db.Column(db.Integer, primary_key=True)

@@ -91,7 +91,7 @@ class MyForm(FlaskForm):
 
 class GroupForm(FlaskForm):
 
-    name = StringField("组名称")
-    parent_id = IntegerField("父级组ID")
+    name = StringField("角色名称")
+    parent_id = IntegerField("父级角色")
     permissions = SelectField("权限",coerce=int)
     submit = SubmitField("提交")
