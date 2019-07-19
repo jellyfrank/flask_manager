@@ -136,9 +136,9 @@ form_class = {
     and issubclass(v, FlaskForm) and getattr(v, "__routename__", False)
 }
 
-logger.debug(f"已注册的模型:{model_class}")
+logger.debug(f"已注册的模型:{model_class.keys()}")
 #[FIXME] form_class结果为空
-logger.debug(f"已注册的表单:{form_class}")
+logger.debug(f"已注册的表单:{form_class.keys()}")
 
 
 def register_route(url, methods, func, login=True):
