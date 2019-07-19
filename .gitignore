@@ -8,3 +8,4 @@ app.log
 config.ini
 migrations
 *.log
+app/tests
