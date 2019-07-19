@@ -8,11 +8,10 @@ from flask_login import login_required, current_user
 from . import bp_main
 from utils.view_util import render_template
 from utils.model_util import flash_errors
-from app.model.group import Group
-from app.main.forms import GroupForm
+from app.model.group import Group, Permission
+from app.main.forms import GroupForm, PermissionForm
 from app.main.views import common_list, common_edit
 from werkzeug.security import generate_password_hash
-from app.model.group import Permission
 
 @bp_main.route("/grouplist", methods=["GET"])
 @login_required
@@ -31,3 +30,20 @@ def groupedit():
         if "password" in request.form:
             form.password.data  = generate_password_hash(request.form["password"])
     return common_edit(Group,form,"group/groupedit.html")
+
+@bp_main.route("/permissionlist", methods=["GET"])
+@login_required
+def permissionlist():
+    """权限管理"""
+    return common_list(Permission, "group/permissionlist.html")
+
+
+@bp_main.route("/permissionedit", methods=["GET", "POST"])
+@login_required
+def permissionedit():
+    """权限编辑"""
+    form = PermissionForm()
+    if request.method == "POST":
+        if "password" in request.form:
+            form.password.data  = generate_password_hash(request.form["password"])
+    return common_edit(Permission,form,"group/permissionedit.html")

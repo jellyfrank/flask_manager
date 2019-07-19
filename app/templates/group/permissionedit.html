@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}编辑角色{% endblock %}
+{% block title %}编辑权限{% endblock %}
 
 
 {% block navbar %}
 <section class="content-header">
-    <h1>编辑角色</h1>
+    <h1>编辑权限</h1>
     <ol class="breadcrumb">
         <li><i class="fa fa-dashboard"></i> 当前位置</li>
         <li class="active">系统设置</li>
-        <li class="active">编辑角色</li>
+        <li class="active">编辑权限</li>
     </ol>
 </section>
 {% endblock %}
@@ -27,19 +27,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>{{form.name.label}}</label>
-                    {{form.name(class_="form-control",placeholder="请输入用户角色")}}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>{{form.parent_id.label}}</label>
-                    {{form.parent_id(class_="form-control",placeholder="请输入父级角色ID")}}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>{{form.permissions.label}}</label>
-                    {{form.permissions(class_="form-control",placeholder="请选择权限")}}
+                    {{form.name(class_="form-control",placeholder="请输入用户权限")}}
                 </div>
             </div>
         </div>

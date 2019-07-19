@@ -95,3 +95,11 @@ class GroupForm(FlaskForm):
     parent_id = IntegerField("父级角色")
     permissions = SelectField("权限",coerce=int)
     submit = SubmitField("提交")
+
+class PermissionForm(FlaskForm):
+
+    name = StringField("权限名称")
+    submit = SubmitField("提交")
+
+
+

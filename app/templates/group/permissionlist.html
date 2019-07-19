@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}角色管理{% endblock %}
+{% block title %}权限管理{% endblock %}
 {% block navbar %}
 <section class="content-header">
-    <h1>角色管理</h1>
+    <h1>权限管理</h1>
     <ol class="breadcrumb">
         <li><i class="fa fa-dashboard"></i> 当前位置</li>
         <li class="active">系统设置</li>
-        <li class="active">角色管理</li>
+        <li class="active">权限管理</li>
     </ol>
 </section>
 {% endblock %}
@@ -23,9 +23,7 @@
         <table class="table table-bordered">
             <tr>
                 <th>ID</th>
-                <th>角色名称</th>
-                <th>父级角色</th>
-                <th>权限</th>
+                <th>权限名称</th>
                 <th>编辑</th>
                 <th>删除</th>
             </tr>
@@ -33,9 +31,7 @@
             <tr>
                 <td>{{row.id}}</td>
                 <td>{{row.name}}</td>
-                <td>{{row.parent_id}}</td>
-                <td>{{row.permissions}}</td>
-                <td><a class='fa fa-lg fa-edit text-light-blue' href='{{url_for("main.groupedit",id=row.id)}}'></a>
+                <td><a class='fa fa-lg fa-edit text-light-blue' href='{{url_for("main.permissionedit",id=row.id)}}'></a>
                 </td>
                 <td><a class='fa fa-lg fa-warning text-red' href='?action=del&id={{row.id}}'></a></td>
             </tr>
@@ -46,7 +42,7 @@
 
     <div class="box-footer">
         <div class="col-md-12">
-            <a class='btn btn-primary pull-right' href='{{ url_for("main.groupedit") }}'>新建角色</a>
+            <a class='btn btn-primary pull-right' href='{{ url_for("main.permissionedit") }}'>新建权限</a>
         </div>
     </div>
 
