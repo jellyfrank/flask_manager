@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, TextAreaField, HiddenField, FileField
 from wtforms import IntegerField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
+from app.model.group import Permission
+
 
 class MenuForm(FlaskForm):
 
@@ -85,3 +87,11 @@ class MyForm(FlaskForm):
     otp_str = StringField("请使用二次验证APP(Google Authenticator)扫码，并妥善保管您的二维码。")
     enable = BooleanField("是否启用二次验证登录", default=False)
     submit = SubmitField("生成")
+
+
+class GroupForm(FlaskForm):
+
+    name = StringField("组名称")
+    parent_id = IntegerField("父级组ID")
+    permissions = SelectField("权限",coerce=int)
+    submit = SubmitField("提交")

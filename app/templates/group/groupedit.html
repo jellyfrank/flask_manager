@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}编辑组{% endblock %}
+
+
+{% block navbar %}
+<section class="content-header">
+    <h1>编辑组</h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 当前位置</li>
+        <li class="active">系统设置</li>
+        <li class="active">编辑组</li>
+    </ol>
+</section>
+{% endblock %}
+
+
+{% block content %}
+<div class="box box-primary">
+    <form method="post" enctype="multipart/form-data">
+        {{form.hidden_tag()}}
+        <div class="box-header with-border">
+            {% include 'message.html' %}
+        </div>
+
+        <div class="box-body">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.name.label}}</label>
+                    {{form.name(class_="form-control",placeholder="请输入用户组")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.parent_id.label}}</label>
+                    {{form.parent_id(class_="form-control",placeholder="请输入父级组ID")}}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{form.permissions.label}}</label>
+                    {{form.permissions(class_="form-control",placeholder="请选择权限")}}
+                </div>
+            </div>
+        </div>
+
+        <div class="box-footer">
+            <div class="col-md-12">
+                {{form.submit(class_="btn btn-primary pull-right")}}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- <script>
+    function initPage() {
+
+        $('#status').bootstrapSwitch();
+        $("#status").on("switchChange.bootstrapSwitch", function (event, state) {
+            switchStatus($(this).data("id"), state, this);
+        });
+
+        $('#enable_otp').bootstrapSwitch();
+        $("#enable_otp").on("switchChange.bootstrapSwitch", function (event, state) {
+            switchStatus($(this).data("id"), state, this);
+        });
+
+    }
+</script> -->
+{% endblock %}

@@ -43,8 +43,6 @@ def changepasswd():
 @login_required
 def userlist():
     """用户管理"""
-    users = User.query.all()
-    form = Users()
     return common_list(User, "user/userlist.html")
 
 

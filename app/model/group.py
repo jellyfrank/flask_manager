@@ -3,8 +3,8 @@ from app import db
 
 class Group(db.Model):
 
-    __tablename__ = "group"
     __routename__ = "group"
+    __tablename__ = "group"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)  # 组名
@@ -15,8 +15,8 @@ class Group(db.Model):
 
 class Permission(db.Model):
 
-    __tablename__ = "permission"
     __routename__ = "permission"
+    __tablename__ = "permission"
 
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(20), nullable=False)  # 权限名称
@@ -25,8 +25,8 @@ class Permission(db.Model):
 
 class Group_Permission_Relation(db.Model):
 
-    __tablename__ = "group_permission_relation"
     __routename__ = "group_permission_relation"
+    __tablename__ = "group_permission_relation"
 
     id = db.Column(db.Integer, primary_key=True)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))

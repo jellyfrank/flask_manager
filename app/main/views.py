@@ -13,9 +13,7 @@ from app import db
 import inspect
 from flask_wtf import FlaskForm
 import os
-from app.model.servers import Server
-from app.model.menu import Menu
-from app.model.user import User
+from app.model import *
 import traceback
 from sqlalchemy.inspection import inspect as isp
 
