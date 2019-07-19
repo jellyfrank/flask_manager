@@ -12,7 +12,7 @@ class MenuForm(FlaskForm):
     route = StringField("菜单路由")
     parent = IntegerField("父级菜单", default=0)
     model_name = StringField("模型名称")
-    fields = StringField("列表视图字段")
+    # fields = StringField("列表视图字段")
     active = BooleanField("是否启用", default=False)
     type = SelectField("类型", choices=[('1', "列表"),
                                       ('2', "编辑")
