@@ -62,8 +62,12 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                     for key, value in dict.items():
                         if key in form.__dict__ and value:
                             field = getattr(form, key)
-                            field.data = dict.get(key)
+                            if field.type == "SelectMultipleField":
+                                field.data = [x.id for x in dict.get(key)]
+                            else:
+                                field.data = dict.get(key)
                             setattr(form, key, field)
+                    
                 # 修改
                 if request.method == 'POST':
                     if form.validate_on_submit():
