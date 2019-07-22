@@ -4,6 +4,7 @@
 
 # 用户安全相关
 from flask import request, flash
+from app import config
 from flask_login import login_required, current_user
 from . import bp_main
 from utils.view_util import render_template
@@ -12,12 +13,20 @@ from app.model.group import Group, Permission
 from app.main.forms import GroupForm, PermissionForm
 from app.main.views import common_list, common_edit
 from werkzeug.security import generate_password_hash
+import math
 
 @bp_main.route("/grouplist", methods=["GET"])
 @login_required
 def grouplist():
     """组管理"""
-    return common_list(Group, "group/grouplist.html")
+    action = request.args.get('action')
+    id = request.args.get('id')
+    page = int(request.args.get('page')) if request.args.get('page') else 1
+    length = int(request.args.get('length') if request.args.get(
+        'length') else config.ITEMS_PER_PAGE)
+    result = Group.query.order_by(Group.id).paginate(page, length, False)
+    dict = {'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
+    return render_template("group/grouplist.html", form=dict, current_user=current_user, result=result)
 
 
 @bp_main.route("/groupedit", methods=["GET", "POST"])

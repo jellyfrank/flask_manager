@@ -82,9 +82,10 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                                 for rel in isp(model).mapper.relationships:
                                     if str(rel).split('.')[1].lower() == field.name.lower():
                                         mapper = rel.mapper.class_
-                                        value= [
-                                                mapper.query.get(item) for item in field.data]
-                                        logger.debug(f"设置字段：{field.name}多选值：{value}")
+                                        value = [
+                                            mapper.query.get(item) for item in field.data]
+                                        logger.debug(
+                                            f"设置字段：{field.name}多选值：{value}")
                                         setattr(model, field.name, value)
                                         break
                             else:

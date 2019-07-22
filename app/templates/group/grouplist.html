@@ -29,12 +29,16 @@
                 <th>编辑</th>
                 <th>删除</th>
             </tr>
-            {% for row in form.content %}
+            {% for row in result.items %}
             <tr>
                 <td>{{row.id}}</td>
                 <td>{{row.name}}</td>
                 <td>{{row.parent_id}}</td>
-                <td>{{row.permissions}}</td>
+                <td>
+                    {% for p in row.permissions %}
+                        <span>{{p.name}}</span>
+                    {% endfor %}
+                </td>
                 <td><a class='fa fa-lg fa-edit text-light-blue' href='{{url_for("main.groupedit",id=row.id)}}'></a>
                 </td>
                 <td><a class='fa fa-lg fa-warning text-red' href='?action=del&id={{row.id}}'></a></td>
