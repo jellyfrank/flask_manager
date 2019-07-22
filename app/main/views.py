@@ -68,6 +68,7 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                 if request.method == 'POST':
                     if form.validate_on_submit():
                         for field in form:
+                            logger.debug(f"修改字段：{field}的类型:{field.type}")
                             if field.type == 'FileField':
                                 file = request.files[field.name]
                                 if file.filename:
@@ -76,6 +77,16 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                                     setattr(model, field.name, file.filename)
                             elif field.type == 'BooleanField':
                                 setattr(model, field.name, bool(field.data))
+                            elif field.type == "SelectMultipleField":
+                                # 获取关联对象类型
+                                for rel in isp(model).mapper.relationships:
+                                    if str(rel).split('.')[1].lower() == field.name.lower():
+                                        mapper = rel.mapper.class_
+                                        value= [
+                                                mapper.query.get(item) for item in field.data]
+                                        logger.debug(f"设置字段：{field.name}多选值：{value}")
+                                        setattr(model, field.name, value)
+                                        break
                             else:
                                 setattr(model, field.name, field.data)
                         db.session.add(model)
@@ -120,22 +131,22 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
 
 # 自动路由
 model_class = {
-    hasattr(v, "__routename__") and v.__routename__ or k: v 
-    for key, value in inspect.getmembers(model) 
+    hasattr(v, "__routename__") and v.__routename__ or k: v
+    for key, value in inspect.getmembers(model)
     if inspect.ismodule(
         value) for k, v in inspect.getmembers(value) if inspect.isclass(v)
     and issubclass(v, db.Model) and getattr(v, "__routename__", False)
 }
 
 form_class = {
-    hasattr(v, "__routename__") and v.__routename__ or k: v 
+    hasattr(v, "__routename__") and v.__routename__ or k: v
     for key, value in inspect.getmembers(main) if inspect.ismodule(
         value) for k, v in inspect.getmembers(value) if inspect.isclass(v)
     and issubclass(v, FlaskForm) and getattr(v, "__routename__", False)
 }
 
 logger.debug(f"已注册的模型:{model_class.keys()}")
-#[FIXME] form_class结果为空
+# [FIXME] form_class结果为空
 logger.debug(f"已注册的表单:{form_class.keys()}")
 
 
@@ -162,10 +173,10 @@ def comm_action(route):
             if not model_class.get(menu.model_name):
                 raise Exception(f"模型{menu.model_name}不存在")
             pk = isp(model_class.get(menu.model_name)).primary_key[0].name
-            fm = form_class.get(menu.model_name,None)
+            fm = form_class.get(menu.model_name, None)
             if not fm:
                 raise Exception(f"不存在与{menu.model_name}对应的表单，是否定义了？")
-            
+
             return common_list(model_class.get(menu.model_name), "menu/commlist.html", nav=menu.name, pk=pk, editroute=f"{me.route}" if me else None, fm=fm())
         if menu.type == 2:
             return common_edit(model_class.get(menu.model_name), form_class.get(menu.model_name)(), "menu/commedit.html", nav=menu.name)

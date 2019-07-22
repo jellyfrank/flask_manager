@@ -25,10 +25,11 @@ def grouplist():
 def groupedit():
     """用户编辑"""
     form = GroupForm()
-    form.permissions.choices = [(p.id,p.name) for p in Permission.query.order_by("id")]
     if request.method == "POST":
+        form = GroupForm(request.form)
         if "password" in request.form:
             form.password.data  = generate_password_hash(request.form["password"])
+    form.permissions.choices = [(p.id,p.name) for p in Permission.query.order_by("id")]
     return common_edit(Group,form,"group/groupedit.html")
 
 @bp_main.route("/permissionlist", methods=["GET"])

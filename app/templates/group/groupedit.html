@@ -39,7 +39,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>{{form.permissions.label}}</label>
-                    {{form.permissions(class_="form-control",placeholder="请选择权限")}}
+                    {{form.permissions(class_="select2 select2-container",placeholder="请选择权限")}}
                 </div>
             </div>
         </div>
@@ -54,19 +54,21 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- <script>
+<script>
     function initPage() {
 
-        $('#status').bootstrapSwitch();
-        $("#status").on("switchChange.bootstrapSwitch", function (event, state) {
-            switchStatus($(this).data("id"), state, this);
-        });
+        $(".select2").select2();
 
-        $('#enable_otp').bootstrapSwitch();
-        $("#enable_otp").on("switchChange.bootstrapSwitch", function (event, state) {
-            switchStatus($(this).data("id"), state, this);
-        });
+        // $('#status').bootstrapSwitch();
+        // $("#status").on("switchChange.bootstrapSwitch", function (event, state) {
+        //     switchStatus($(this).data("id"), state, this);
+        // });
+
+        // $('#enable_otp').bootstrapSwitch();
+        // $("#enable_otp").on("switchChange.bootstrapSwitch", function (event, state) {
+        //     switchStatus($(this).data("id"), state, this);
+        // });
 
     }
-</script> -->
+</script>
 {% endblock %}

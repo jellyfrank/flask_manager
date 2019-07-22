@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, TextAreaField, HiddenField, FileField
-from wtforms import IntegerField, DateTimeField
+from wtforms import IntegerField, DateTimeField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
 from app.model.group import Permission
 
@@ -93,7 +93,7 @@ class GroupForm(FlaskForm):
 
     name = StringField("角色名称")
     parent_id = IntegerField("父级角色")
-    permissions = SelectField("权限",coerce=int)
+    permissions = SelectMultipleField("权限",coerce=int)
     submit = SubmitField("提交")
 
 class PermissionForm(FlaskForm):
