@@ -67,7 +67,7 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                             else:
                                 field.data = dict.get(key)
                             setattr(form, key, field)
-                    
+
                 # 修改
                 if request.method == 'POST':
                     if form.validate_on_submit():
@@ -117,6 +117,23 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                             conditions.append(
                                 f"{field.name}={field.data}"
                             )
+                        #[TODO] 创建SelectMultipleField
+                        elif field.type == "SelectMultipleField":
+                            pass
+                            # 获取关联对象类型
+                            # for k,v in DynamicModel.__dict__.items():
+                            #     if k == field.name:
+                            #         conditions.append(f"{field.name}={[v.class_.query.get(i) for i in field.data]}")
+                            #         break
+                            # for rel in isp(model).mapper.relationships:
+                            #     if str(rel).split('.')[1].lower() == field.name.lower():
+                            #         mapper = rel.mapper.class_
+                            #         value = [
+                            #             mapper.query.get(item) for item in field.data]
+                            #         logger.debug(
+                            #             f"设置字段：{field.name}多选值：{value}")
+                            #         setattr(model, field.name, value)
+                            #         break
                         else:
                             conditions.append(
                                 "{}='{}'".format(field.name, field.data))
