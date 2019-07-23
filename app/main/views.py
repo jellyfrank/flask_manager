@@ -119,12 +119,13 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                             )
                         #[TODO] 创建SelectMultipleField
                         elif field.type == "SelectMultipleField":
-                            pass
                             # 获取关联对象类型
-                            # for k,v in DynamicModel.__dict__.items():
-                            #     if k == field.name:
-                            #         conditions.append(f"{field.name}={[v.class_.query.get(i) for i in field.data]}")
-                            #         break
+                            for k,v in DynamicModel.__dict__.items():
+                                if k == field.name:
+                                    print('------')
+                                    print(getattr(DynamicModel,k).__dict__)
+                                    conditions.append(f"{field.name}={[v.class_.query.get(i) for i in field.data]}")
+                                    break
                             # for rel in isp(model).mapper.relationships:
                             #     if str(rel).split('.')[1].lower() == field.name.lower():
                             #         mapper = rel.mapper.class_
