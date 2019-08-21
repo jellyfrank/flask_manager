@@ -11,7 +11,7 @@ class Config(object):
         '''
 
         self.cf = ConfigParser()
-        self.cf.read(path)
+        self.cf.read(path,encoding="utf-8-sig")
         self.env = env
         self.comm = dict()
         self._set_comm_variants()
