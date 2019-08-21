@@ -1,8 +1,9 @@
 flask
 flask_sqlalchemy
+flask_wtf
 flask_login
 flask-script
-autils==0.1.0
-taobao-sdk
+pyotp
+autils==0.2.3
 suds-py3
 flask-migrate
