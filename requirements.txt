@@ -4,6 +4,8 @@ flask_wtf
 flask_login
 flask-script
 pyotp
-autils==0.2.3
+autils
 suds-py3
 flask-migrate
+tornado
+paramiko
