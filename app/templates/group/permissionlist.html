@@ -19,7 +19,6 @@
     </div>
 
     <div class="box-body">
-        {% if form%}
         <table class="table table-bordered">
             <tr>
                 <th>ID</th>
@@ -27,7 +26,7 @@
                 <th>编辑</th>
                 <th>删除</th>
             </tr>
-            {% for row in form.content %}
+            {% for row in objs %}
             <tr>
                 <td>{{row.id}}</td>
                 <td>{{row.name}}</td>
@@ -37,7 +36,6 @@
             </tr>
             {% endfor %}
         </table>
-        {% endif %}
     </div>
 
     <div class="box-footer">
@@ -47,11 +45,11 @@
     </div>
 
     <div class="box-footer clearfix">
-        {% if form%}
+        {% if objs%}
         <ul class="pagination pagination-sm no-margin pull-right">
             <li><a href="#">&laquo;</a></li>
-            {% for i in range(1, form.total_page+ 1) %}
-            {% if i == form.page %}
+            {% for i in range(1, total_page+ 1) %}
+            {% if i == page %}
             <li><a href="?page={{i}}"><b>{{i}}</b></a></li>
             {% else %}
             <li><a href="?page={{i}}">{{i}}</a></li>

@@ -31,11 +31,11 @@
                 {% endif %}
                 <th>删除</th>
             </tr>
-            {% for row in form.content%}
+            {% for row in objs%}
             <tr>
                 <td hidden="1">{{row[pk]}}</td>
                 {% for field in fm if field.name !='csrf_token'and field.type !='SubmitField' %}
-                <td>{{row.get(field.name)}}</td>
+                <td>{{row[field.name]}}</td>
                 {% endfor %}
                 {% if editroute %}
                 <td><a class='fa fa-lg fa-edit text-light-blue' href='/comm/{{editroute}}?id={{row[pk]}}'></a>

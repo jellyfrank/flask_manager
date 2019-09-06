@@ -42,11 +42,14 @@ def common_list(DynamicModel, view, primary_key="id", **context):
 
     context["pk"] = primary_key
     # 查询列表
-    result = DynamicModel.query.order_by(
+    objs = DynamicModel.query.order_by(
         getattr(DynamicModel, primary_key)).paginate(page, length, False)
-    dict = {'content': [model_util.get_model_colums_dict(item) for item in result.items],
-            'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
-    return render_template(view, form=dict, current_user=current_user, **context)
+    # dict = {'content': [model_util.get_model_colums_dict(item) for item in result.items],
+    #         'total_page': math.ceil(result.total / length), 'page': page, 'length': length}
+    context['total_page'] = math.ceil(objs.total / length)
+    context['page'] = page
+    context['length'] = length
+    return render_template(view, objs=objs.items, current_user=current_user, **context)
 
 
 # 通用单模型查询&新增&修改
@@ -117,14 +120,13 @@ def common_edit(DynamicModel, form, view, pk="id", ** context):
                             conditions.append(
                                 f"{field.name}={field.data}"
                             )
-                        #[TODO] 创建SelectMultipleField
+                        # [TODO] 创建SelectMultipleField
                         elif field.type == "SelectMultipleField":
                             # 获取关联对象类型
-                            for k,v in DynamicModel.__dict__.items():
+                            for k, v in DynamicModel.__dict__.items():
                                 if k == field.name:
-                                    print('------')
-                                    print(getattr(DynamicModel,k).__dict__)
-                                    conditions.append(f"{field.name}={[v.class_.query.get(i) for i in field.data]}")
+                                    conditions.append(
+                                        f"{field.name}={[v.class_.query.get(i) for i in field.data]}")
                                     break
                             # for rel in isp(model).mapper.relationships:
                             #     if str(rel).split('.')[1].lower() == field.name.lower():
