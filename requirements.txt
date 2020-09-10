@@ -9,3 +9,4 @@ suds-py3
 flask-migrate
 tornado
 paramiko
+qrcode
